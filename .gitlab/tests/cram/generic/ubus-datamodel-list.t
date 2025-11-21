@@ -93,6 +93,7 @@ Check that ubus has expected datamodels available:
   Device.Firewall
   Device.Hardware
   Device.Hardware.CPUs
+  Device.Hardware.PowerManagement
   Device.Hardware.X_PRPLWARE-COM_FlashDevice
   Device.HomePlug
   Device.Hosts
@@ -256,6 +257,8 @@ Check that ubus has expected datamodels available:
   ManagementServer.Mapping
   ManagementServer.SMM
   ManagementServer.SMM.DUStateChangeComplete
+  ManagementServer.ScheduleInform
+  ManagementServer.StandbyPolicy
   ManagementServer.State
   ManagementServer.Stats
   ManagementServer.Subscription
@@ -303,6 +306,8 @@ Check that ubus has expected datamodels available:
   PersistentConfiguration.Config
   PersistentConfiguration.Config.Security
   PersistentConfiguration.Service
+  PowerManagement
+  PowerManagement.Standby
   PowerStatus
   PowerStatus.PowerSensor
   ProcessFaults
