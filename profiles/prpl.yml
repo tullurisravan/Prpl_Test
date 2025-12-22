@@ -15,7 +15,7 @@ feeds:
 
   - name: feed_prplos
     uri: https://gitlab.com/prpl-foundation/prplos/feeds/feed-prplos.git
-    revision: prplware-v4.0.2@5e5bd50b7816712f36777b43fb4891e1fec42014
+    revision: dev_HOP-11230@921eb7540a913bff911adba756031073f4aa684c
 
 additional_packages:
   - feed: packages
@@ -53,6 +53,8 @@ packages:
   - gmap-mibs-common
   - gmap-mod-ethernet-dev
   - gmap-mod-name-selector
+  - gmap-mod-upnp
+  - gmap-mod-dnssd
   - gmap-mod-self
   - gmap-server
   - hosts-manager
@@ -61,9 +63,11 @@ packages:
   - iptables-mod-ipopt
   - iptables-zz-legacy
   - libdhcpoptions
+  - libupnp
   - libfwinterface
   - libfwrules
   - libnetmodel
+  - libtr181-hosts
   - lua-amx
   - lxc
   - lxc-attach
@@ -195,6 +199,7 @@ packages:
   - tr181-sfp
   - tr181-temperature
   - tr181-upnp
+  - tr181-upnpdiscovery
   - tr181-usb
   - tr181-usermanagement
   - tr181-xpon
