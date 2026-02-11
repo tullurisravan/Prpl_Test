@@ -1,0 +1,47 @@
+#!/bin/sh
+
+HELP=0
+
+# parse options
+while [ -n "$1" ]; do
+	case "$1" in
+		-h|--help) HELP=1; break;;
+		-*)
+			echo "Invalid option: $1" >&2
+			exit 1
+		;;
+		*) break;;
+	esac
+	shift;
+done
+
+print_help() {
+	cat <<EOF
+Usage: $0 <image file or URL>
+
+This is a wrapper script over Prpl's swupgrade functionality, created for backward compatibility
+upgrade-option:
+	-h | --help  display this help
+
+EOF
+}
+
+IMAGE="$1"
+
+if [ $HELP -gt 0 ]; then
+	print_help
+	exit 0
+fi
+
+url_schema=$(uriparse "$IMAGE" | grep scheme | tr -s ' ' | cut -d ' ' -f2)
+
+if [ -z "$url_schema" ]; then
+	if [ -f "$IMAGE" ]; then
+		IMAGE="file://$(readlink -f "$IMAGE")"
+	else
+		echo "Image file not found." >&2
+		exit 1
+	fi
+fi
+
+ba-cli "DeviceInfo.FirmwareImage.[Status!=\"Active\"].Download(URL = \"$IMAGE\", AutoActivate = 1)"
