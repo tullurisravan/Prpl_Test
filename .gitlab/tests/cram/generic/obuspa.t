@@ -1893,6 +1893,15 @@ Check that obuspa has expected datamodel available (minus the platform specific 
   Device.LocalAgent.Controller.{i}.MTP.{i}.UDS.
   Device.LocalAgent.Controller.{i}.MTP.{i}.UDS.USPServiceRef
   Device.LocalAgent.Controller.{i}.MTP.{i}.UDS.UnixDomainSocketRef
+  Device.LocalAgent.Controller.{i}.MTP.{i}.WebSocket.
+  Device.LocalAgent.Controller.{i}.MTP.{i}.WebSocket.CurrentRetryCount
+  Device.LocalAgent.Controller.{i}.MTP.{i}.WebSocket.EnableEncryption
+  Device.LocalAgent.Controller.{i}.MTP.{i}.WebSocket.Host
+  Device.LocalAgent.Controller.{i}.MTP.{i}.WebSocket.KeepAliveInterval
+  Device.LocalAgent.Controller.{i}.MTP.{i}.WebSocket.Path
+  Device.LocalAgent.Controller.{i}.MTP.{i}.WebSocket.Port
+  Device.LocalAgent.Controller.{i}.MTP.{i}.WebSocket.SessionRetryIntervalMultiplier
+  Device.LocalAgent.Controller.{i}.MTP.{i}.WebSocket.SessionRetryMinimumWaitInterval
   Device.LocalAgent.Controller.{i}.MTPNumberOfEntries
   Device.LocalAgent.Controller.{i}.PeriodicNotifInterval
   Device.LocalAgent.Controller.{i}.PeriodicNotifTime
@@ -1964,6 +1973,11 @@ Check that obuspa has expected datamodel available (minus the platform specific 
   Device.LocalAgent.MTP.{i}.Status
   Device.LocalAgent.MTP.{i}.UDS.
   Device.LocalAgent.MTP.{i}.UDS.UnixDomainSocketRef
+  Device.LocalAgent.MTP.{i}.WebSocket.
+  Device.LocalAgent.MTP.{i}.WebSocket.EnableEncryption
+  Device.LocalAgent.MTP.{i}.WebSocket.KeepAliveInterval
+  Device.LocalAgent.MTP.{i}.WebSocket.Path
+  Device.LocalAgent.MTP.{i}.WebSocket.Port
   Device.LocalAgent.MTPNumberOfEntries
   Device.LocalAgent.Periodic!
   Device.LocalAgent.Request.{i}.
@@ -2862,17 +2876,30 @@ Check that obuspa has expected datamodel available (minus the platform specific 
   Device.STOMP.ConnectionNumberOfEntries
   Device.ScheduleTimer()                                                                               proto::tr181-device
   Device.ScheduleTimer() input:DelaySeconds
-  Device.Security.
-  Device.Security.Certificate.{i}.
-  Device.Security.Certificate.{i}.Issuer
-  Device.Security.Certificate.{i}.LastModif
-  Device.Security.Certificate.{i}.NotAfter
-  Device.Security.Certificate.{i}.NotBefore
-  Device.Security.Certificate.{i}.SerialNumber
-  Device.Security.Certificate.{i}.SignatureAlgorithm
-  Device.Security.Certificate.{i}.Subject
-  Device.Security.Certificate.{i}.SubjectAlt
-  Device.Security.CertificateNumberOfEntries
+  Device.Security.                                                                                     proto::tr181-security
+  Device.Security.CABundle.{i}.                                                                        proto::tr181-security
+  Device.Security.CABundle.{i}.CACertificates                                                          proto::tr181-security
+  Device.Security.CABundle.{i}.CADir()                                                                 proto::tr181-security
+  Device.Security.CABundle.{i}.CADir() output:CADir
+  Device.Security.CABundle.{i}.CAFile()                                                                proto::tr181-security
+  Device.Security.CABundle.{i}.CAFile() output:CAFile
+  Device.Security.CABundle.{i}.Enable                                                                  proto::tr181-security
+  Device.Security.CABundle.{i}.Name                                                                    proto::tr181-security
+  Device.Security.CABundleNumberOfEntries                                                              proto::tr181-security
+  Device.Security.Certificate.{i}.                                                                     proto::tr181-security
+  Device.Security.Certificate.{i}.Enable                                                               proto::tr181-security
+  Device.Security.Certificate.{i}.GetCertificateURI()                                                  proto::tr181-security
+  Device.Security.Certificate.{i}.GetCertificateURI() output:CertificateURI
+  Device.Security.Certificate.{i}.GetCertificateURI() output:PrivateKeyURI
+  Device.Security.Certificate.{i}.Issuer                                                               proto::tr181-security
+  Device.Security.Certificate.{i}.LastModif                                                            proto::tr181-security
+  Device.Security.Certificate.{i}.NotAfter                                                             proto::tr181-security
+  Device.Security.Certificate.{i}.NotBefore                                                            proto::tr181-security
+  Device.Security.Certificate.{i}.SerialNumber                                                         proto::tr181-security
+  Device.Security.Certificate.{i}.SignatureAlgorithm                                                   proto::tr181-security
+  Device.Security.Certificate.{i}.Subject                                                              proto::tr181-security
+  Device.Security.Certificate.{i}.SubjectAlt                                                           proto::tr181-security
+  Device.Security.CertificateNumberOfEntries                                                           proto::tr181-security
   Device.SelfTestDiagnostics()                                                                         proto::tr181-device
   Device.SelfTestDiagnostics() output:Results
   Device.SelfTestDiagnostics() output:Status
@@ -7369,6 +7396,15 @@ Check that obuspa provides the same datamodel again (minus the platform specific
   Device.LocalAgent.Controller.{i}.MTP.{i}.UDS.
   Device.LocalAgent.Controller.{i}.MTP.{i}.UDS.USPServiceRef
   Device.LocalAgent.Controller.{i}.MTP.{i}.UDS.UnixDomainSocketRef
+  Device.LocalAgent.Controller.{i}.MTP.{i}.WebSocket.
+  Device.LocalAgent.Controller.{i}.MTP.{i}.WebSocket.CurrentRetryCount
+  Device.LocalAgent.Controller.{i}.MTP.{i}.WebSocket.EnableEncryption
+  Device.LocalAgent.Controller.{i}.MTP.{i}.WebSocket.Host
+  Device.LocalAgent.Controller.{i}.MTP.{i}.WebSocket.KeepAliveInterval
+  Device.LocalAgent.Controller.{i}.MTP.{i}.WebSocket.Path
+  Device.LocalAgent.Controller.{i}.MTP.{i}.WebSocket.Port
+  Device.LocalAgent.Controller.{i}.MTP.{i}.WebSocket.SessionRetryIntervalMultiplier
+  Device.LocalAgent.Controller.{i}.MTP.{i}.WebSocket.SessionRetryMinimumWaitInterval
   Device.LocalAgent.Controller.{i}.MTPNumberOfEntries
   Device.LocalAgent.Controller.{i}.PeriodicNotifInterval
   Device.LocalAgent.Controller.{i}.PeriodicNotifTime
@@ -7440,6 +7476,11 @@ Check that obuspa provides the same datamodel again (minus the platform specific
   Device.LocalAgent.MTP.{i}.Status
   Device.LocalAgent.MTP.{i}.UDS.
   Device.LocalAgent.MTP.{i}.UDS.UnixDomainSocketRef
+  Device.LocalAgent.MTP.{i}.WebSocket.
+  Device.LocalAgent.MTP.{i}.WebSocket.EnableEncryption
+  Device.LocalAgent.MTP.{i}.WebSocket.KeepAliveInterval
+  Device.LocalAgent.MTP.{i}.WebSocket.Path
+  Device.LocalAgent.MTP.{i}.WebSocket.Port
   Device.LocalAgent.MTPNumberOfEntries
   Device.LocalAgent.Periodic!
   Device.LocalAgent.Request.{i}.
@@ -8338,17 +8379,30 @@ Check that obuspa provides the same datamodel again (minus the platform specific
   Device.STOMP.ConnectionNumberOfEntries
   Device.ScheduleTimer()                                                                               proto::tr181-device
   Device.ScheduleTimer() input:DelaySeconds
-  Device.Security.
-  Device.Security.Certificate.{i}.
-  Device.Security.Certificate.{i}.Issuer
-  Device.Security.Certificate.{i}.LastModif
-  Device.Security.Certificate.{i}.NotAfter
-  Device.Security.Certificate.{i}.NotBefore
-  Device.Security.Certificate.{i}.SerialNumber
-  Device.Security.Certificate.{i}.SignatureAlgorithm
-  Device.Security.Certificate.{i}.Subject
-  Device.Security.Certificate.{i}.SubjectAlt
-  Device.Security.CertificateNumberOfEntries
+  Device.Security.                                                                                     proto::tr181-security
+  Device.Security.CABundle.{i}.                                                                        proto::tr181-security
+  Device.Security.CABundle.{i}.CACertificates                                                          proto::tr181-security
+  Device.Security.CABundle.{i}.CADir()                                                                 proto::tr181-security
+  Device.Security.CABundle.{i}.CADir() output:CADir
+  Device.Security.CABundle.{i}.CAFile()                                                                proto::tr181-security
+  Device.Security.CABundle.{i}.CAFile() output:CAFile
+  Device.Security.CABundle.{i}.Enable                                                                  proto::tr181-security
+  Device.Security.CABundle.{i}.Name                                                                    proto::tr181-security
+  Device.Security.CABundleNumberOfEntries                                                              proto::tr181-security
+  Device.Security.Certificate.{i}.                                                                     proto::tr181-security
+  Device.Security.Certificate.{i}.Enable                                                               proto::tr181-security
+  Device.Security.Certificate.{i}.GetCertificateURI()                                                  proto::tr181-security
+  Device.Security.Certificate.{i}.GetCertificateURI() output:CertificateURI
+  Device.Security.Certificate.{i}.GetCertificateURI() output:PrivateKeyURI
+  Device.Security.Certificate.{i}.Issuer                                                               proto::tr181-security
+  Device.Security.Certificate.{i}.LastModif                                                            proto::tr181-security
+  Device.Security.Certificate.{i}.NotAfter                                                             proto::tr181-security
+  Device.Security.Certificate.{i}.NotBefore                                                            proto::tr181-security
+  Device.Security.Certificate.{i}.SerialNumber                                                         proto::tr181-security
+  Device.Security.Certificate.{i}.SignatureAlgorithm                                                   proto::tr181-security
+  Device.Security.Certificate.{i}.Subject                                                              proto::tr181-security
+  Device.Security.Certificate.{i}.SubjectAlt                                                           proto::tr181-security
+  Device.Security.CertificateNumberOfEntries                                                           proto::tr181-security
   Device.SelfTestDiagnostics()                                                                         proto::tr181-device
   Device.SelfTestDiagnostics() output:Results
   Device.SelfTestDiagnostics() output:Status
