@@ -57,7 +57,6 @@ Create R alias:
   $ rm -f /tmp/ubus_output /tmp/ubus_sub.pid  > /dev/null  2>&1
 
   $ R '# Check message received by subscriber:
-  > killall mosquitto_sub > /dev/null 2>&1
   > cat /tmp/mqtt_subscriber
   > rm /tmp/mqtt_subscriber'
   testMessage
