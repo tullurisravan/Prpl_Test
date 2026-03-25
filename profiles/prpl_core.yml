@@ -11,7 +11,7 @@ feeds:
 
   - name: feed_prplos
     uri: https://gitlab.com/prpl-foundation/prplos/feeds/feed-prplos.git
-    revision: main@0574d0a2380b5224c3e5b568dc484041dbbdc3b4
+    revision: main@ba18f0fdcb2fd85e21a4ea2ef97da5eb189df078
 
 additional_packages:
   - feed: packages
@@ -102,7 +102,7 @@ packages:
   - tr181-temperature
   - tr181-usermanagement
   - wifi-sensing
-
+  - mod-fwi-swupdate
 diffconfig: |
           CONFIG_DEVEL=y
           CONFIG_KERNEL_WERROR=y
