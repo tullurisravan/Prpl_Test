@@ -29,7 +29,7 @@ include:
     - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_PROTECTED == "true" && $CI_MERGE_REQUEST_LABELS =~ /ci::allow-expensive-jobs/'
   before_script:
     - export BRIDGE_COVERITY_BUILD_COMMAND="make -j $(nproc)"
-    - apt-get -qq update && apt-get install -y curl file unzip
+    - sudo apt-get -qq update && sudo apt-get install -y curl file unzip coccinelle
     - touch .build_failed
     - mkdir -p logs
     - set -o pipefail
@@ -67,6 +67,7 @@ include:
         for option in $CI_BUILD_CONFIG $CI_BUILD_CONFIG_EXTRA; do
           echo "$option" | sed -E "s/^\+(.*)$/CONFIG_\1=y/;s/^\-(.*)$/CONFIG_\1=n/" >> .config
         done
+        echo "CONFIG_REGULATOR_CPR3=n" >> .config
         cat .config
         make defconfig | tee --append logs/build.log
 
@@ -124,6 +125,8 @@ include:
   extends: .run-black-duck-tools
   after_script:
     - mkdir -p bin
+    - mkdir -p logs
+    - cp .bridge/coverity_connect_scan/*/idir/build-log.txt logs/coverity-build-log.txt 2>/dev/null || true
     - tar -czf bin/coverity-scan-output.tar.gz .bridge/coverity_connect_scan/comparison-report 2>/dev/null || true
   artifacts:
     expire_in: 1 month
