@@ -8,7 +8,7 @@ description: Build image for prpl Foundation Freedom board
 feeds:
   - name: feed_qca
     uri: https://gitlab.com/prpl-foundation/prplOS/feed-qca.git
-    revision: latest-24.10/ath13.1@0c4161d3419410ea4a6c41cc16445329ce72e85d
+    revision: latest-24.10/ath13.1@d247876e67bc175f084fe66c052210f035940ff1
 
 packages:
   - ipq95xx
@@ -19,6 +19,7 @@ packages:
   - aq_phy
   - qca-ssdk-shell
   - efr32-boot-config
+  - gnss-boot-config
   - wireless-freedom
   - kmod-usb-phy-ipq807x
   - kmod-usb-dwc3-internal
