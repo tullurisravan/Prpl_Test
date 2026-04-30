@@ -11,7 +11,7 @@ feeds:
 
   - name: feed_prplos
     uri: https://gitlab.com/prpl-foundation/prplos/feeds/feed-prplos.git
-    revision: main@98d0812833617e4696dd48e3e4bbbeb16e0b0649
+    revision: dev_FEAT-150_main@c3d98ac138355a80df80d3c49336b3bfe5fe9a98
 
 additional_packages:
   - feed: packages
@@ -19,6 +19,8 @@ additional_packages:
       - libnl-core
       - libnl-route
       - syslog-ng
+      - strongswan-full
+      - wireguard-tools
 
 packages:
   - acl-manager
@@ -36,6 +38,7 @@ packages:
   - libfwinterface
   - libfwrules
   - libnetmodel
+  - libwireguard
   - lua-amx
   - mod-amxb-ubus
   - mod-ba-cli
@@ -62,6 +65,10 @@ packages:
   - netmodel-ethernet
   - netmodel-ip
   - netmodel-iprouter
+  - netmodel-ipsec
+  - netmodel-gre
+  - netmodel-tuntap
+  - netmodel-wireguard
   - netmodel-logical
   - netmodel-netdev
   - netmodel-optical
@@ -102,6 +109,10 @@ packages:
   - tr181-temperature
   - tr181-usermanagement
   - wifi-sensing
+  - tr181-ipsec
+  - tr181-wireguard
+  - tr181-gre
+  - tr181-tuntap
 
 diffconfig: |
           CONFIG_DEVEL=y
