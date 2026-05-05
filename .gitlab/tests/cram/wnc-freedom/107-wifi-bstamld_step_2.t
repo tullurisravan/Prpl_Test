@@ -3,51 +3,29 @@ Create R alias:
   $ alias R="${CRAM_REMOTE_COMMAND:-}"
   $ . "${TESTDIR}/../scripts/wifi.sh"
 
-  $ R logger -t cram "Starting bSTAMLD test ..."
+  $ R logger -t cram "Starting bSTAMLD test 2/2 ..."
 
-Stop prplMesh:
+#########################################
+# Test MLO with shared profile disabled #
+#########################################
 
-  $ R logger -t cram "Stop prplmesh"
+  $ R logger -t cram "Disable all EndPoints before disabling UseNeighborProfile"
 
-  $ R "ba-cli -l X_PRPLWARE-COM_ProcessManager.PrplMesh.Enable=0" | tr -d '\n'
-  0 (no-eol)
+  $ wifi_dm "EndPoint.*.Enable=0"
+  Device.WiFi.EndPoint.1.Enable=0
+  Device.WiFi.EndPoint.2.Enable=0
+  Device.WiFi.EndPoint.3.Enable=0
 
-  $ sleep 2
+  $ sleep 5
 
-Check default configuration:
+Disable UseNeighborProfile:
 
-  $ wifi_dm "bSTAMLD.?"
-  No data found
-
-  $ wifi_dm "EndPoint.1.SSIDReference+.MLDUnit?0"
-  Device.WiFi.SSID.\d+.MLDUnit=-1 (re)
-
-  $ wifi_dm "EndPoint.2.SSIDReference+.MLDUnit?0"
-  Device.WiFi.SSID.\d+.MLDUnit=-1 (re)
-
-  $ wifi_dm "EndPoint.3.SSIDReference+.MLDUnit?0"
-  Device.WiFi.SSID.\d+.MLDUnit=-1 (re)
-
-  $ wifi_dm "bSTAMLDMaxLinks?"
-  Device.WiFi.bSTAMLDMaxLinks=3
-
-  $ wifi_dm "Radio.*.Capabilities.WiFi7STARole.?" "WiFi." "ba-cli"
-  WiFi.Radio.1.Capabilities.WiFi7STARole.EMLMRSupport=0
-  WiFi.Radio.1.Capabilities.WiFi7STARole.EMLSRSupport=1
-  WiFi.Radio.1.Capabilities.WiFi7STARole.NSTRSupport=0
-  WiFi.Radio.1.Capabilities.WiFi7STARole.STRSupport=0
-  WiFi.Radio.2.Capabilities.WiFi7STARole.EMLMRSupport=0
-  WiFi.Radio.2.Capabilities.WiFi7STARole.EMLSRSupport=1
-  WiFi.Radio.2.Capabilities.WiFi7STARole.NSTRSupport=0
-  WiFi.Radio.2.Capabilities.WiFi7STARole.STRSupport=0
-  WiFi.Radio.3.Capabilities.WiFi7STARole.EMLMRSupport=0
-  WiFi.Radio.3.Capabilities.WiFi7STARole.EMLSRSupport=1
-  WiFi.Radio.3.Capabilities.WiFi7STARole.NSTRSupport=0
-  WiFi.Radio.3.Capabilities.WiFi7STARole.STRSupport=0
+  $ wifi_dm "bSTAMLD.1.bSTAMLDConfig.UseNeighborProfile=0" "Device.WiFi." "ba-cli" protected
+  Device.WiFi.bSTAMLD.1.bSTAMLDConfig.UseNeighborProfile=0
 
 Configure an EP MLD with same MLD unit:
 
-  $ R logger -t cram "Configure bSTAMLD"
+  $ R logger -t cram "Configure bSTAMLD with 3 Links"
 
   $ wifi_dm "EndPoint.1.SSIDReference+.MLDUnit=11"
   Device.WiFi.SSID.\d+.MLDUnit=11 (re)
@@ -58,40 +36,9 @@ Configure an EP MLD with same MLD unit:
   $ wifi_dm "EndPoint.3.SSIDReference+.MLDUnit=11"
   Device.WiFi.SSID.\d+.MLDUnit=11 (re)
 
-  $ sleep 5
+Create EP2 and EP3 profiles:
 
-Check DM. At this step only MLDID can be checked. All other objects can't be updated unless we perform an onboarding:
-
-  $ wifi_dm "bSTAMLD.?"
-  Device.WiFi.bSTAMLD.1.AffiliatedbSTAList=""
-  Device.WiFi.bSTAMLD.1.BSSID=""
-  Device.WiFi.bSTAMLD.1.MLDID=11
-  Device.WiFi.bSTAMLD.1.MLDMACAddress=""
-  Device.WiFi.bSTAMLD.1.bSTAMLDConfig.EMLMREnabled=0
-  Device.WiFi.bSTAMLD.1.bSTAMLDConfig.EMLSREnabled=1
-  Device.WiFi.bSTAMLD.1.bSTAMLDConfig.NSTREnabled=0
-  Device.WiFi.bSTAMLD.1.bSTAMLDConfig.STREnabled=0
-
-Create profile for EP 1:
-
-  $ ep1_alias=$(R 'ba-cli -l "WiFi.EndPoint.1.Profile+"' | sed '/^$/d')
-  $ echo $ep1_alias
-  cpe-Profile.* (re)
-
-  $ wifi_dm "EndPoint.1.ProfileReference=WiFi.EndPoint.1.Profile.${ep1_alias}" "Device.WiFi." "ba-cli"
-  Device.WiFi.EndPoint.1.ProfileReference="WiFi.EndPoint.1.Profile.* (re)
-
-  $ wifi_dm "EndPoint.1.Profile.${ep1_alias}.Enable=1" "Device.WiFi." "ba-cli"
-  Device.WiFi.EndPoint.1.Profile.\d+.Enable=1 (re)
-
-  $ wifi_dm "EndPoint.1.Profile.${ep1_alias}.SSID=\"TEST_MLO\"" "Device.WiFi." "ba-cli"
-  Device.WiFi.EndPoint.1.Profile.\d+.SSID="TEST_MLO" (re)
-
-  $ wifi_dm "EndPoint.1.Profile.${ep1_alias}.Security.ModeEnabled=\"WPA2-WPA3-Personal\"" "Device.WiFi." "ba-cli"
-  Device.WiFi.EndPoint.1.Profile.\d+.Security.ModeEnabled="WPA2-WPA3-Personal" (re)
-
-  $ wifi_dm "EndPoint.1.Profile.${ep1_alias}.Security.KeyPassphrase=\"password\"" "Device.WiFi." "ba-cli"
-  Device.WiFi.EndPoint.1.Profile.\d+.Security.KeyPassphrase="password" (re)
+  $ R logger -t cram "Create EP2 and EP3 profiles"
 
 Create profile for EP 2:
 
@@ -137,7 +84,7 @@ Create profile for EP 3:
 
 Enable all EPs:
 
-  $ R logger -t cram "Enable all EndPoints"
+  $ R logger -t cram "Enable again all EndPoints"
 
   $ wifi_dm "EndPoint.*.Enable=1"
   Device.WiFi.EndPoint.1.Enable=1
@@ -166,11 +113,26 @@ Check if 3 bands are used in frequencies list:
   $ echo $freq_list | grep -oE '6[0-9]{3}|7[0-1][0-9]{2}' | wc -l
   [1-9][0-9]* (re)
 
+#########################################
+# Restore defaults                      #
+#########################################
+
+  $ R logger -t cram "Finishing bSTAMLD test"
+
+  $ R logger -t cram "Disable all EndPoints"
+
+  $ wifi_dm "EndPoint.*.Enable=0"
+  Device.WiFi.EndPoint.1.Enable=0
+  Device.WiFi.EndPoint.2.Enable=0
+  Device.WiFi.EndPoint.3.Enable=0
+
 Restore defaults:
 
   $ R logger -t cram "Finishing bSTAMLD test"
 
-  $ R "ba-cli -l \"Device.WiFi.EndPoint.1.Profile.${ep1_alias}-\"" | sed '/^$/d'
+Assume that the profile created during the test has index 1. Because of the test split (PCF-2222), we can't read reliably EP1 alias.
+
+  $ R "ba-cli -l \"Device.WiFi.EndPoint.1.Profile.1-\"" | sed '/^$/d'
   Device.WiFi.EndPoint.1.Profile.\d+. (re)
   Device.WiFi.EndPoint.1.Profile.\d+.Security. (re)
 
@@ -191,7 +153,10 @@ Restore defaults:
   $ wifi_dm "EndPoint.3.SSIDReference+.MLDUnit=-1"
   Device.WiFi.SSID.\d+.MLDUnit=-1 (re)
 
+  $ wifi_dm "bSTAMLD.1.bSTAMLDConfig.UseNeighborProfile=1" "Device.WiFi." "ba-cli" protected
+  Device.WiFi.bSTAMLD.1.bSTAMLDConfig.UseNeighborProfile=1
+
   $ R "ba-cli -l X_PRPLWARE-COM_ProcessManager.PrplMesh.Enable=1" | tr -d '\n'
   1 (no-eol)
 
-  $ R logger -t cram "Test finished!"
+  $ R logger -t cram "bSTAMLD test 1/2 finished!"
