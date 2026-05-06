@@ -93,6 +93,7 @@ feeds:
     tracking_branch:  updk_9.2.4
     revision: 718bd0bd8f884c1a65a4179c6174c7e2796dbcf8
 
+
 packages:
   - efr32-boot-config
   - kmod-mxl_eth_drv
