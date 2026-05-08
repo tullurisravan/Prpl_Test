@@ -2,6 +2,7 @@
 Setup the test configuration:
 
   $ alias R="${CRAM_REMOTE_COMMAND:-}"
+  $ R logger -t cram Starting 037-lcm-capabilities
   $ alias C="${CRAM_REMOTE_COPY:-}"
   $ S=". /tmp/script_functions.sh"
   $ C ${TESTDIR}/script_functions.sh root@${TARGET_LAN_IP}:/tmp/script_functions.sh 2>/dev/null
@@ -177,3 +178,6 @@ Remove testrole2 from Devices.User.Role
   $ R "${S} && remove_user_role --rolename testrole2"
   
   ["Device.Users.Role.*."] (glob)
+  
+
+  $ R logger -t cram Ended 037-lcm-capabilities
