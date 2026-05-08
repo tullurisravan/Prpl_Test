@@ -155,9 +155,8 @@ Check that ubus has expected datamodels available:
   Devices
   Devices.Config
   Devices.Config.global
-  Devices.Config.location
   Devices.Config.mod-self
-  Devices.Config.priority
+  Devices.Debug
   Devices.Device
   Devices.Query
   DynamicDNS
