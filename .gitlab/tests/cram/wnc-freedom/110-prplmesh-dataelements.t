@@ -30,6 +30,7 @@ Restart prplmesh:
   $ R logger -t cram "Restart prplmesh"
 
   $ R "ba-cli X_PRPLWARE-COM_ProcessManager.PrplMesh.ManagementMode=Multi-AP-Controller-and-Agent"  > /dev/null
+
   $ R "ba-cli -l X_PRPLWARE-COM_ProcessManager.PrplMesh.Enable=1" | tr -d '\n'
   1 (no-eol)
 
@@ -75,76 +76,27 @@ Create instances of Network.AccessPoint and push them to the agent:
 
   $ R logger -t cram "create instances of Network.AccessPoint and push them to the agent"
 
-  $ R "ubus -S call X_PRPLWARE-COM_WiFiController.Network.AccessPoint _add"
-  {"object":"X_PRPLWARE-COM_WiFiController.Network.AccessPoint.1.","index":1,"name":"1","parameters":{},"path":"X_PRPLWARE-COM_WiFiController.Network.AccessPoint.1."}
-  {}
-  {"amxd-error-code":0}
+First 2 Instances : Priv and Guest for 2.4/5GHz
 
-Since no persistent storage of NbAPI Network subsection, always index:1 after controller restart:
+  $ R "ba-cli \"X_PRPLWARE-COM_WiFiController.Network.AccessPoint+(MLDUnit=-1,Band2_4G=1,Band5GH=1,Band5GL=1,MultiApMode=\"Fronthaul+Backhaul\",X_PRPLWARE_VapType=\"home\",SSID=\"prplOSpriv110\",Security.ModeEnabled=\"WPA3-Personal\",Security.KeyPassphrase=\"passwordPriv\",Enable=1)\"" | tail -n +2 | sed '/^$/d'
+  X_PRPLWARE-COM_WiFiController.Network.AccessPoint.* (re)
 
-  $ R "ubus -S call X_PRPLWARE-COM_WiFiController.Network.AccessPoint.1 _set '{\"parameters\":{\"Band2_4G\":1,\"Band5GH\":1,\"Band5GL\":1,\"Band6G\":1}}'"
-  {"X_PRPLWARE-COM_WiFiController.Network.AccessPoint.1.":{"Band5GH":true,"Band6G":true,"Band2_4G":true,"Band5GL":true}}
-  {}
-  {"amxd-error-code":0}
+  $ R "ba-cli \"X_PRPLWARE-COM_WiFiController.Network.AccessPoint+(MLDUnit=-1,Band2_4G=1,Band5GH=1,Band5GL=1,MultiApMode=\"Fronthaul\",X_PRPLWARE_VapType=\"guest\",SSID=\"prplOSguest110\",Security.ModeEnabled=\"WPA2-Personal\",Security.KeyPassphrase=\"passwordGuest\",Enable=1)\"" | tail -n +2 | sed '/^$/d'
+  X_PRPLWARE-COM_WiFiController.Network.AccessPoint.* (re)
 
-  $ R "ubus -S call X_PRPLWARE-COM_WiFiController.Network.AccessPoint.1 _set '{\"parameters\":{\"MultiApMode\":\"Fronthaul+Backhaul\",\"X_PRPLWARE_VapType\":\"home\"}}'"
-  {"X_PRPLWARE-COM_WiFiController.Network.AccessPoint.1.":{"X_PRPLWARE_VapType":"home","MultiApMode":"Fronthaul+Backhaul"}}
-  {}
-  {"amxd-error-code":0}
+Last 2 Instances : Priv and Guest for 6GHz
 
-  $ R "ubus -S call X_PRPLWARE-COM_WiFiController.Network.AccessPoint.1.Security _set '{\"parameters\":{\"ModeEnabled\":\"WPA2-Personal\",\"KeyPassphrase\":\"password\"}}'"
-  {"X_PRPLWARE-COM_WiFiController.Network.AccessPoint.1.Security.":{"KeyPassphrase":"password","ModeEnabled":"WPA2-Personal"}}
-  {}
-  {"amxd-error-code":0}
+  $ R "ba-cli \"X_PRPLWARE-COM_WiFiController.Network.AccessPoint+(MLDUnit=-1,Band6G=1,MultiApMode=\"Fronthaul+Backhaul\",X_PRPLWARE_VapType=\"home\",SSID=\"prplOSpriv110\",Security.ModeEnabled=\"WPA3-Personal\",Security.KeyPassphrase=\"passwordPriv\",Enable=1)\"" | tail -n +2 | sed '/^$/d'
+  X_PRPLWARE-COM_WiFiController.Network.AccessPoint.* (re)
 
-  $ R "ubus -S call X_PRPLWARE-COM_WiFiController.Network.AccessPoint.1 _set '{\"parameters\":{\"SSID\":\"prplOSpriv\"}}'"
-  {"X_PRPLWARE-COM_WiFiController.Network.AccessPoint.1.":{"SSID":"prplOSpriv"}}
-  {}
-  {"amxd-error-code":0}
+  $ R "ba-cli \"X_PRPLWARE-COM_WiFiController.Network.AccessPoint+(MLDUnit=-1,Band6G=1,MultiApMode=\"Fronthaul\",X_PRPLWARE_VapType=\"guest\",SSID=\"prplOSguest110\",Security.ModeEnabled=\"WPA3-Personal\",Security.KeyPassphrase=\"passwordGuest\",Enable=1)\"" | tail -n +2 | sed '/^$/d'
+  X_PRPLWARE-COM_WiFiController.Network.AccessPoint.* (re)
 
-In case the controller does not yet have this parameter, catch error here isof later during teardown test:
-  $ R "ubus -S call X_PRPLWARE-COM_WiFiController.Network.AccessPoint.1 _set '{\"parameters\":{\"Enable\":1}}'"
-  {"X_PRPLWARE-COM_WiFiController.Network.AccessPoint.1.":{"Enable":true}}
-  {}
-  {"amxd-error-code":0}
-
-Create second instance of Network.AccessPoint for guest VAPs:
-
-  $ R "ubus -S call X_PRPLWARE-COM_WiFiController.Network.AccessPoint _add"
-  {"object":"X_PRPLWARE-COM_WiFiController.Network.AccessPoint.2.","index":2,"name":"2","parameters":{},"path":"X_PRPLWARE-COM_WiFiController.Network.AccessPoint.2."}
-  {}
-  {"amxd-error-code":0}
-  $ R "ubus -S call X_PRPLWARE-COM_WiFiController.Network.AccessPoint.2 _set '{\"parameters\":{\"Band2_4G\":1,\"Band5GH\":1,\"Band5GL\":1,\"Band6G\":1}}'"
-  {"X_PRPLWARE-COM_WiFiController.Network.AccessPoint.2.":{"Band5GH":true,"Band6G":true,"Band2_4G":true,"Band5GL":true}}
-  {}
-  {"amxd-error-code":0}
-
-  $ R "ubus -S call X_PRPLWARE-COM_WiFiController.Network.AccessPoint.2 _set '{\"parameters\":{\"MultiApMode\":\"Fronthaul\",\"X_PRPLWARE_VapType\":\"guest\"}}'"
-  {"X_PRPLWARE-COM_WiFiController.Network.AccessPoint.2.":{"X_PRPLWARE_VapType":"guest","MultiApMode":"Fronthaul"}}
-  {}
-  {"amxd-error-code":0}
-
-  $ R "ubus -S call X_PRPLWARE-COM_WiFiController.Network.AccessPoint.2.Security _set '{\"parameters\":{\"ModeEnabled\":\"WPA2-Personal\",\"KeyPassphrase\":\"passwordGUEST\"}}'"
-  {"X_PRPLWARE-COM_WiFiController.Network.AccessPoint.2.Security.":{"KeyPassphrase":"passwordGUEST","ModeEnabled":"WPA2-Personal"}}
-  {}
-  {"amxd-error-code":0}
-
-  $ R "ubus -S call X_PRPLWARE-COM_WiFiController.Network.AccessPoint.2 _set '{\"parameters\":{\"SSID\":\"prplOSguest\"}}'"
-  {"X_PRPLWARE-COM_WiFiController.Network.AccessPoint.2.":{"SSID":"prplOSguest"}}
-  {}
-  {"amxd-error-code":0}
-
-In case the controller does not yet have this parameter, catch error here isof later during teardown test:
-  $ R "ubus -S call X_PRPLWARE-COM_WiFiController.Network.AccessPoint.2 _set '{\"parameters\":{\"Enable\":1}}'"
-  {"X_PRPLWARE-COM_WiFiController.Network.AccessPoint.2.":{"Enable":true}}
-  {}
-  {"amxd-error-code":0}
-
-  $ R "ubus -S call X_PRPLWARE-COM_WiFiController.Network AccessPointCommit"
-  {"retval":""}
-  {}
-  {"amxd-error-code":0}
-
+  $ R "ba-cli \"X_PRPLWARE-COM_WiFiController.Network.AccessPointCommit()\"" | tail -n +2 |  sed '/^$/d'
+  X_PRPLWARE-COM_WiFiController.Network.AccessPointCommit() returned
+  [
+      ""
+  ]
 
   $ sleep 15
 
@@ -165,14 +117,12 @@ Check that wireless is operating:
   backhaul_(AC:91:9B|58:E4:03):[0-9A-F]{2}:[0-9A-F]{2}:[0-9A-F]{2} (re)
   backhaul_(AC:91:9B|58:E4:03):[0-9A-F]{2}:[0-9A-F]{2}:[0-9A-F]{2} (re)
   backhaul_(AC:91:9B|58:E4:03):[0-9A-F]{2}:[0-9A-F]{2}:[0-9A-F]{2} (re)
-  prplOSguest
-  prplOSguest
-  prplOSguest
-  prplOSpriv
-  prplOSpriv
-  prplOSpriv
-
-  $ sleep 10
+  prplOSguest110
+  prplOSguest110
+  prplOSguest110
+  prplOSpriv110
+  prplOSpriv110
+  prplOSpriv110
 
 Check that prplmesh processes are running:
 
@@ -185,87 +135,137 @@ Check that prplmesh is operational:
 
   $ R logger -t cram "Check that prplmesh is operational"
 
-  $ R "/opt/prplmesh/bin/prplmesh_cli -c status -o pretty" | sed 's/\t/        /g'
-  Mode: Agent+Controller
-  Controller:
-          bridge MAC: (AC:91:9B|58:E4:03):[0-9A-F]{2}:[0-9A-F]{2}:[0-9A-F]{2} (re)
-          1 agent(s) connected
-  Agent:
-          MAC address: [0-9A-F]{2}:[0-9A-F]{2}:[0-9A-F]{2}:[0-9A-F]{2}:[0-9A-F]{2}:[0-9A-F]{2} (re)
-          management mode: Multi-AP-Controller-and-Agent
-          fronthaul ifaces: wlan0,wlan1,wlan2
-          current state: OPERATIONAL
-          best state: OPERATIONAL
-          Fronthaul:
-                  interface: wlan0
-                  current state: OPERATIONAL
-                  best state: OPERATIONAL
-          Fronthaul:
-                  interface: wlan1
-                  current state: OPERATIONAL
-                  best state: OPERATIONAL
-          Fronthaul:
-                  interface: wlan2
-                  current state: OPERATIONAL
-                  best state: OPERATIONAL
+  $ R "ba-cli -a X_PRPLWARE-COM_Agent.Info.CurrentState? | grep '='"
+  X_PRPLWARE-COM_Agent.Info.CurrentState="OPERATIONAL \(15\)"
 
-Check that controller received correct info about wifi subsystem:
+  $ R "ba-cli -a X_PRPLWARE-COM_Agent.Info.BestState? | grep '='"
+  X_PRPLWARE-COM_Agent.Info.BestState="OPERATIONAL \(15\)"
 
-  $ R logger -t cram "Check controller info about network"
+Check Fronthaul Processes CurrentState and BestState
 
-  $ R "/opt/prplmesh/bin/beerocks_cli -c bml_conn_map" | egrep '(wlan|OK)' | sed -E "s/.*: (wlan[0-9.]+) .*/\1/" | LC_ALL=C sort
-  bml_connect: return value is: BML_RET_OK, Success status
-  bml_disconnect: return value is: BML_RET_OK, Success status
-  bml_nw_map_query: return value is: BML_RET_OK, Success status
-  wlan0
-  wlan0.0
-  wlan0.1
-  wlan1
-  wlan1.0
-  wlan1.1
-  wlan2
-  wlan2.0
-  wlan2.1
+  $ R "ba-cli -a X_PRPLWARE-COM_Agent.Info.Fronthaul.*.CurrentState? | grep '='"
+  X_PRPLWARE-COM_Agent.Info.Fronthaul.1.CurrentState="OPERATIONAL \(4\)"
+  X_PRPLWARE-COM_Agent.Info.Fronthaul.2.CurrentState="OPERATIONAL \(4\)"
+  X_PRPLWARE-COM_Agent.Info.Fronthaul.3.CurrentState="OPERATIONAL \(4\)"
+
+  $ R "ba-cli -a X_PRPLWARE-COM_Agent.Info.Fronthaul.*.BestState? | grep '='"
+  X_PRPLWARE-COM_Agent.Info.Fronthaul.1.BestState="OPERATIONAL \(4\)"
+  X_PRPLWARE-COM_Agent.Info.Fronthaul.2.BestState="OPERATIONAL \(4\)"
+  X_PRPLWARE-COM_Agent.Info.Fronthaul.3.BestState="OPERATIONAL \(4\)"
+
+  $ dm_check_prplmesh_status
+  X_PRPLWARE-COM_ProcessManager.PrplMesh.CertificationMode=0
+  X_PRPLWARE-COM_ProcessManager.PrplMesh.Enable=1
+  X_PRPLWARE-COM_ProcessManager.PrplMesh.FaultCode="NoFault"
+  X_PRPLWARE-COM_ProcessManager.PrplMesh.ManagementMode="Multi-AP-Controller-and-Agent"
+  X_PRPLWARE-COM_ProcessManager.PrplMesh.Status="Active"
+
+Check Controller knownled about network
+
+  $ dm_check_controller_number_of_bsses_per_radio
+  X_PRPLWARE-COM_WiFiController.Network.Device.1.Radio.1.BSSNumberOfEntries=2
+  X_PRPLWARE-COM_WiFiController.Network.Device.1.Radio.2.BSSNumberOfEntries=2
+  X_PRPLWARE-COM_WiFiController.Network.Device.1.Radio.3.BSSNumberOfEntries=2
+
+Check Controller Known SSID List (Transported via AP Operational BSS TLV)
+
+  $ R "ba-cli -l \"X_PRPLWARE-COM_WiFiController.Network.Device.1.Radio.*.BSS.*.SSID?\"" | sed '/^$/d' | sort
+  prplOSguest110
+  prplOSguest110
+  prplOSguest110
+  prplOSpriv110
+  prplOSpriv110
+  prplOSpriv110
+
+  $ R "ba-cli -a 'WiFi.AccessPoint.*.Security.ModeEnabled?' | grep -v '>' | grep '.'"
+  WiFi.AccessPoint.1.Security.ModeEnabled="WPA3-Personal"
+  WiFi.AccessPoint.2.Security.ModeEnabled="WPA2-Personal"
+  WiFi.AccessPoint.3.Security.ModeEnabled="WPA3-Personal"
+  WiFi.AccessPoint.4.Security.ModeEnabled="WPA2-Personal"
+  WiFi.AccessPoint.5.Security.ModeEnabled="WPA3-Personal"
+  WiFi.AccessPoint.6.Security.ModeEnabled="WPA3-Personal"
+  WiFi.AccessPoint.7.Security.ModeEnabled="WPA3-Personal-Transition"
+  WiFi.AccessPoint.8.Security.ModeEnabled="WPA3-Personal-Transition"
+  WiFi.AccessPoint.9.Security.ModeEnabled="WPA3-Personal"
+
+
+Restore Default Configuration through NBAPI:
+
+2.4/5GHz priv: Security.ModeEnabled, MultiApType, Passphrase, SSID
+
+  $ R "ba-cli -l X_PRPLWARE-COM_WiFiController.Network.AccessPoint.1.Security.ModeEnabled=\"WPA3-Personal-Transition\"" | sed '/^$/d'
+  WPA3-Personal-Transition
+
+  $ R "ba-cli -l X_PRPLWARE-COM_WiFiController.Network.AccessPoint.1.MultiApMode=\"Fronthaul\"" | sed '/^$/d'
+  Fronthaul
+
+  $ R "ba-cli -l X_PRPLWARE-COM_WiFiController.Network.AccessPoint.1.Security.KeyPassphrase=\"password\"" | sed '/^$/d'
+  password
+
+  $ R "ba-cli -l X_PRPLWARE-COM_WiFiController.Network.AccessPoint.1.SSID=\"prplOS\"" | sed '/^$/d'
+  prplOS
+
+2.4/5GHz guest: Security.ModeEnabled, SSID
+
+  $ R "ba-cli -l X_PRPLWARE-COM_WiFiController.Network.AccessPoint.2.Security.ModeEnabled=\"WPA3-Personal-Transition\"" | sed '/^$/d'
+  WPA3-Personal-Transition
+
+  $ R "ba-cli -l X_PRPLWARE-COM_WiFiController.Network.AccessPoint.2.SSID=\"prplOS-guest\"" | sed '/^$/d'
+  prplOS-guest
+
+6GHz priv : MultiApType, Passphrase, SSID
+
+  $ R "ba-cli -l X_PRPLWARE-COM_WiFiController.Network.AccessPoint.3.MultiApMode=\"Fronthaul\"" | sed '/^$/d'
+  Fronthaul
+
+  $ R "ba-cli -l X_PRPLWARE-COM_WiFiController.Network.AccessPoint.3.Security.KeyPassphrase=\"password\"" | sed '/^$/d'
+  password
+
+  $ R "ba-cli -l X_PRPLWARE-COM_WiFiController.Network.AccessPoint.3.SSID=\"prplOS\"" | sed '/^$/d'
+  prplOS
+
+6GHz guest : SSID
+
+  $ R "ba-cli -l X_PRPLWARE-COM_WiFiController.Network.AccessPoint.4.SSID=\"prplOS-guest\"" | sed '/^$/d'
+  prplOS-guest
+
+  $ R "ba-cli \"X_PRPLWARE-COM_WiFiController.Network.AccessPointCommit()\"" | tail -n +2 | sed '/^$/d'
+  X_PRPLWARE-COM_WiFiController.Network.AccessPointCommit() returned
+  [
+      ""
+  ]
+
+Empirical 10s value for sleep; pwhm datamodel takes 'some time' to propagate back to controller
+
+  $ sleep 20
+
+  $ R "ba-cli -l \"X_PRPLWARE-COM_WiFiController.Network.Device.1.Radio.*.BSS.*.SSID?\"" | sed '/^$/d' | sort
+  prplOS
+  prplOS
+  prplOS
+  prplOS-guest
+  prplOS-guest
+  prplOS-guest
 
 To disable wireless, disable instances of Network.AccessPoint{i} and call AccessPointCommit():
 
   $ R logger -t cram "Stop wireless"
 
-  $ R "ubus -S call X_PRPLWARE-COM_WiFiController.Network.AccessPoint.1 _set '{\"parameters\":{\"Enable\":0}}'"
-  {"X_PRPLWARE-COM_WiFiController.Network.AccessPoint.1.":{"Enable":false}}
-  {}
-  {"amxd-error-code":0}
+  $ R "ba-cli -l 'X_PRPLWARE-COM_WiFiController.Network.AccessPoint.*.Enable=0'" |  sed '/^$/d'
+  0
+  0
+  0
+  0
 
-  $ R "ubus -S call X_PRPLWARE-COM_WiFiController.Network.AccessPoint.2 _set '{\"parameters\":{\"Enable\":0}}'"
-  {"X_PRPLWARE-COM_WiFiController.Network.AccessPoint.2.":{"Enable":false}}
-  {}
-  {"amxd-error-code":0}
-
-  $ R "ubus -S call X_PRPLWARE-COM_WiFiController.Network AccessPointCommit"
-  {"retval":""}
-  {}
-  {"amxd-error-code":0}
+  $ R "ba-cli \"X_PRPLWARE-COM_WiFiController.Network.AccessPointCommit()\"" | tail -n +2 |  sed '/^$/d'
+  X_PRPLWARE-COM_WiFiController.Network.AccessPointCommit() returned
+  [
+      ""
+  ]
 
   $ sleep 10
 
-Restore Security.ModeEnabled for AccessPoints used in the test
-
-  $ R "ba-cli  \"WiFi.AccessPoint.[RadioReference == 'Device.WiFi.Radio.1'].Security.ModeEnabled='WPA2-WPA3-Personal'\"" | grep 'ModeEnabled=' | sed '/^$/d' | grep -v '>'
-  WiFi.AccessPoint.\d+.Security.ModeEnabled="WPA2-WPA3-Personal" (re)
-  WiFi.AccessPoint.\d+.Security.ModeEnabled="WPA2-WPA3-Personal" (re)
-  WiFi.AccessPoint.\d+.Security.ModeEnabled="WPA2-WPA3-Personal" (re)
-
-  $ R "ba-cli  \"WiFi.AccessPoint.[RadioReference == 'Device.WiFi.Radio.2'].Security.ModeEnabled='WPA2-WPA3-Personal'\"" | grep 'ModeEnabled=' | sed '/^$/d' | grep -v '>'
-  WiFi.AccessPoint.\d+.Security.ModeEnabled="WPA2-WPA3-Personal" (re)
-  WiFi.AccessPoint.\d+.Security.ModeEnabled="WPA2-WPA3-Personal" (re)
-  WiFi.AccessPoint.\d+.Security.ModeEnabled="WPA2-WPA3-Personal" (re)
-
-  $ R "ba-cli  \"WiFi.AccessPoint.[RadioReference == 'Device.WiFi.Radio.3'].Security.ModeEnabled='WPA3-Personal'\"" | grep 'ModeEnabled=' | sed '/^$/d' | grep -v '>'
-  WiFi.AccessPoint.\d+.Security.ModeEnabled="WPA3-Personal" (re)
-  WiFi.AccessPoint.\d+.Security.ModeEnabled="WPA3-Personal" (re)
-  WiFi.AccessPoint.\d+.Security.ModeEnabled="WPA3-Personal" (re)
-
-Check that wireless is disabled:
+Check that SSIDs are disabled in pwhm:
 
   $ get_ssid_status
   Down
@@ -278,35 +278,50 @@ Check that wireless is disabled:
   Down
   Down
 
-Check that SSIDs did not change:
+  $ dm_check_controller_number_of_bsses_per_radio
+  X_PRPLWARE-COM_WiFiController.Network.Device.1.Radio.1.BSSNumberOfEntries=0
+  X_PRPLWARE-COM_WiFiController.Network.Device.1.Radio.2.BSSNumberOfEntries=0
+  X_PRPLWARE-COM_WiFiController.Network.Device.1.Radio.3.BSSNumberOfEntries=0
+
+Stop prplmesh
+
+  $ R "ba-cli -l X_PRPLWARE-COM_ProcessManager.PrplMesh.Enable=0" | tr -d '\n'
+  0 (no-eol)
+
+Check that SSID names are back to defaults:
 
   $ get_ssid_ssid
   backhaul_(AC:91:9B|58:E4:03):[0-9A-F]{2}:[0-9A-F]{2}:[0-9A-F]{2} (re)
   backhaul_(AC:91:9B|58:E4:03):[0-9A-F]{2}:[0-9A-F]{2}:[0-9A-F]{2} (re)
   backhaul_(AC:91:9B|58:E4:03):[0-9A-F]{2}:[0-9A-F]{2}:[0-9A-F]{2} (re)
-  prplOSguest
-  prplOSguest
-  prplOSguest
-  prplOSpriv
-  prplOSpriv
-  prplOSpriv
+  prplOS
+  prplOS
+  prplOS
+  prplOS-guest
+  prplOS-guest
+  prplOS-guest
 
-Restore Security Mode to default values
+Check default security modes
 
-  $ R "ba-cli  \"WiFi.AccessPoint.[RadioReference == 'Device.WiFi.Radio.1'].Security.ModeEnabled='WPA2-WPA3-Personal'\"" | grep 'ModeEnabled=' | sed '/^$/d' | grep -v '>'
-  WiFi.AccessPoint.\d+.Security.ModeEnabled="WPA2-WPA3-Personal" (re)
-  WiFi.AccessPoint.\d+.Security.ModeEnabled="WPA2-WPA3-Personal" (re)
-  WiFi.AccessPoint.\d+.Security.ModeEnabled="WPA2-WPA3-Personal" (re)
+  $ R "ba-cli -a 'WiFi.AccessPoint.*.Security.ModeEnabled?' | grep -v '>' | grep '.'"
+  WiFi.AccessPoint.1.Security.ModeEnabled="WPA3-Personal-Transition"
+  WiFi.AccessPoint.2.Security.ModeEnabled="WPA3-Personal-Transition"
+  WiFi.AccessPoint.3.Security.ModeEnabled="WPA3-Personal-Transition"
+  WiFi.AccessPoint.4.Security.ModeEnabled="WPA3-Personal-Transition"
+  WiFi.AccessPoint.5.Security.ModeEnabled="WPA3-Personal"
+  WiFi.AccessPoint.6.Security.ModeEnabled="WPA3-Personal"
+  WiFi.AccessPoint.7.Security.ModeEnabled="WPA3-Personal-Transition"
+  WiFi.AccessPoint.8.Security.ModeEnabled="WPA3-Personal-Transition"
+  WiFi.AccessPoint.9.Security.ModeEnabled="WPA3-Personal"
 
-  $ R "ba-cli  \"WiFi.AccessPoint.[RadioReference == 'Device.WiFi.Radio.2'].Security.ModeEnabled='WPA2-WPA3-Personal'\"" | grep 'ModeEnabled=' | sed '/^$/d' | grep -v '>'
-  WiFi.AccessPoint.\d+.Security.ModeEnabled="WPA2-WPA3-Personal" (re)
-  WiFi.AccessPoint.\d+.Security.ModeEnabled="WPA2-WPA3-Personal" (re)
-  WiFi.AccessPoint.\d+.Security.ModeEnabled="WPA2-WPA3-Personal" (re)
+Restore Controller 'VAP Configuration Source'-configuration to default
 
-  $ R "ba-cli  \"WiFi.AccessPoint.[RadioReference == 'Device.WiFi.Radio.3'].Security.ModeEnabled='WPA3-Personal'\"" | grep 'ModeEnabled=' | sed '/^$/d' | grep -v '>'
-  WiFi.AccessPoint.\d+.Security.ModeEnabled="WPA3-Personal" (re)
-  WiFi.AccessPoint.\d+.Security.ModeEnabled="WPA3-Personal" (re)
-  WiFi.AccessPoint.\d+.Security.ModeEnabled="WPA3-Personal" (re)
+  $ R "sed -i 's/use_dataelements_vap_configs=1/use_dataelements_vap_configs=0/g' /opt/prplmesh/config/beerocks_controller.conf"
+
+Restart prplmesh:
+
+  $ R "ba-cli -l X_PRPLWARE-COM_ProcessManager.PrplMesh.Enable=1" | tr -d '\n'
+  1 (no-eol)
 
 Check the default ChipsetVendor param configurations:
 
