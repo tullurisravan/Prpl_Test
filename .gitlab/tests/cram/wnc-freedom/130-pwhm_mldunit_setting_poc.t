@@ -3,12 +3,17 @@ Create R alias:
   $ alias R="${CRAM_REMOTE_COMMAND:-}"
   $ . "${TESTDIR}/../scripts/wifi.sh"
 
+  $ R "logger -t cram 'Starting MLDUnitSetting test ...'"
 
   $ R "ba-cli -l X_PRPLWARE-COM_ProcessManager.PrplMesh.Enable=0 | grep '.'"
   0
 
 SIlently set invalid MLDUnits for all SSIDs
   $ R "ba-cli WiFi.SSID.*.MLDUnit=-1 > /dev/null"
+
+  $ R "ba-cli WiFi.AccessPoint.*.Enable=0 > /dev/null"
+
+  $ sleep 2
 
 Check 11be is enabled
   $ R "ba-cli -al WiFi.Radio.2.OperatingStandards? | grep '.'"
@@ -25,13 +30,15 @@ Enable AccessPoint Under Test
 
   $ sleep 5
 
-  $ R "usp-cli -l Device.WiFi.AccessPoint.3.SSIDReference+.Name? | grep \".\""
+  $ R "ba-cli -l Device.WiFi.AccessPoint.3.SSIDReference+.Name? | grep '.'"
   wlan1.1
 
 Used later to check hostapd config file
-  $ itf=$(R "usp-cli -l Device.WiFi.AccessPoint.3.SSIDReference+.Name?" | sed '/^$/d')
+  $ itf=$(R "ba-cli -l Device.WiFi.AccessPoint.3.SSIDReference+.Name?" | sed '/^$/d')
 
 Subset A : Invalid MLDUnit
+
+  $ R "logger -t cram 'MLDUnitSetting Invalid MLDUnit; MLDUnitSetting=NotRequired'"
 
 Set Invalid MLDUnit
   $ R "ba-cli -l \"WiFi.AccessPoint.3.SSIDReference+.MLDUnit=-1\" | sed '/^$/d'"
@@ -42,6 +49,11 @@ Set MLDUnitSetting='NotRequired'
   NotRequired
 
   $ sleep 15
+
+  $ R "cat /tmp/wlan1_hapd.conf | grep -E \"ieee80211be|mld_ap|disable_11be\""
+  ieee80211be=1
+  disable_11be=0
+  mld_ap=0
 
   $ rad_be=$(R "cat /tmp/wlan1_hapd.conf | grep ieee80211be | cut -d '=' -f2")
 
@@ -54,11 +66,16 @@ Set MLDUnitSetting='NotRequired'
   $ echo $mld_conf
   100
 
+  $ R "logger -t cram 'MLDUnitSetting Invalid MLDUnit; MLDUnitSetting=Required'"
+
 Set MLDUnitSetting='Required'
   $ R "ba-cli -l -a \"protected; WiFi.Radio.2.IEEE80211be.MLDUnitSetting='Required'\" | grep Required"
   Required
 
   $ sleep 15
+
+  $ R "cat /tmp/wlan1_hapd.conf | grep -E \"ieee80211be|mld_ap|disable_11be\""
+  ieee80211be=0
 
 Check 11be configuration : ieee80211be absent, other options absent as well
   $ R "cat /tmp/wlan1_hapd.conf | grep ieee80211be"
@@ -71,11 +88,18 @@ should be absent:
   $ get_hapd_config $itf disable_11be
   Option 'disable_11be' not found
 
+  $ R "logger -t cram 'MLDUnitSetting Invalid MLDUnit; MLDUnitSetting=Assumed'"
+
 Set MLDUnitSetting='Assumed'; with invalid MLDUnit, this should still result in WiFi7 - EHT + MLO configuration
   $ R "ba-cli -l -a \"protected; WiFi.Radio.2.IEEE80211be.MLDUnitSetting='Assumed'\" | grep Assumed"
   Assumed
 
   $ sleep 15
+
+  $ R "cat /tmp/wlan1_hapd.conf | grep -E \"ieee80211be|mld_ap|disable_11be\""
+  ieee80211be=1
+  mld_ap=1
+  disable_11be=0
 
   $ rad_be=$(R "cat /tmp/wlan1_hapd.conf | grep ieee80211be | cut -d '=' -f2")
 
@@ -90,11 +114,18 @@ Set MLDUnitSetting='Assumed'; with invalid MLDUnit, this should still result in 
 
 Subset B : Valid MLDUnit
 
+  $ R "logger -t cram 'MLDUnitSetting MLDUnit; MLDUnitSetting=Assumed'"
+
 Set arbitrary Valid MLDUnit
   $ R "ba-cli 'WiFi.AccessPoint.3.SSIDReference+.MLDUnit=8' | grep -v '>' | grep '='"
   Device.WiFi.SSID.*.MLDUnit=8 (re)
 
   $ sleep 15
+
+  $ R "cat /tmp/wlan1_hapd.conf | grep -E \"ieee80211be|mld_ap|disable_11be\""
+  ieee80211be=1
+  mld_ap=1
+  disable_11be=0
 
   $ rad_be=$(R "cat /tmp/wlan1_hapd.conf | grep ieee80211be | cut -d '=' -f2")
 
@@ -107,6 +138,7 @@ Set arbitrary Valid MLDUnit
   $ echo $mld_conf
   110
 
+  $ R "logger -t cram 'MLDUnitSetting MLDUnit; MLDUnitSetting=Required'"
 
 Set MLDUnitSetting='Required'
   $ R "ba-cli -l -a \"protected; WiFi.Radio.2.IEEE80211be.MLDUnitSetting='Required'\" | grep Required"
@@ -114,6 +146,11 @@ Set MLDUnitSetting='Required'
 
   $ sleep 15
 
+  $ R "cat /tmp/wlan1_hapd.conf | grep -E \"ieee80211be|mld_ap|disable_11be\""
+  ieee80211be=1
+  mld_ap=1
+  disable_11be=0
+
   $ rad_be=$(R "cat /tmp/wlan1_hapd.conf | grep ieee80211be | cut -d '=' -f2")
 
   $ itf_mld=$(get_hapd_config $itf mld_ap)
@@ -125,12 +162,18 @@ Set MLDUnitSetting='Required'
   $ echo $mld_conf
   110
 
+  $ R "logger -t cram 'MLDUnitSetting MLDUnit; MLDUnitSetting=NotRequired'"
 
 Set MLDUnitSetting='NotRequired'
   $ R "ba-cli -l -a \"protected; WiFi.Radio.2.IEEE80211be.MLDUnitSetting='NotRequired'\" | grep NotRequired"
   NotRequired
 
   $ sleep 15
+
+  $ R "cat /tmp/wlan1_hapd.conf | grep -E \"ieee80211be|mld_ap|disable_11be\""
+  ieee80211be=1
+  mld_ap=1
+  disable_11be=0
 
 Check 11be configuration : 11BE enabled for Radio, mld_ap enabled for interface
   $ R "cat /tmp/wlan1_hapd.conf | grep ieee80211be"
@@ -141,3 +184,7 @@ Check 11be configuration : 11BE enabled for Radio, mld_ap enabled for interface
 
   $ get_hapd_config $itf disable_11be
   0
+
+Restore default MLDUnitSetting : 'Required'
+  $ R "ba-cli -l -a \"protected; WiFi.Radio.2.IEEE80211be.MLDUnitSetting='Required'\" | grep Required"
+  Required
