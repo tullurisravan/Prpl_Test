@@ -11,8 +11,6 @@ Create R alias:
 SIlently set invalid MLDUnits for all SSIDs
   $ R "ba-cli WiFi.SSID.*.MLDUnit=-1 > /dev/null"
 
-  $ R "ba-cli WiFi.AccessPoint.*.Enable=0 > /dev/null"
-
   $ sleep 2
 
 Check 11be is enabled
