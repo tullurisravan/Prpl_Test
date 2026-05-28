@@ -38,6 +38,9 @@ Add three user roles to the ExecutionEnvironment, this should fail since one rol
   SoftwareModules.ExecEnv.1.ModifyAvailableRoles() returned
   ["",{"err_code":7004,"err_msg":"User role [norole] does not exist in Device.Users.Role."}]
 
+  DUStateChange! * FaultCode=7004 * (glob)
+  
+
 Two roles should still be present
   $ R "${S} && check_available_user_roles"
   Device.Users.Role.[RoleName=="testrole1"],Device.Users.Role.[RoleName=="testrole2"]
@@ -81,6 +84,9 @@ Install a container with user role that is not available. this should fail
   ERROR: call (null) failed with status 1 - unknown error
   SoftwareModules.InstallDU() returned
   ["",{"err_code":7037,"err_msg":"Sandbox [generic] does not have the required role [norole]"}]
+
+  DUStateChange! * FaultCode=7037 * (glob)
+  
 
 Install a container with user role that is available. this should succeed
 

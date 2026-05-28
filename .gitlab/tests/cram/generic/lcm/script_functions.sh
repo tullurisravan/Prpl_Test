@@ -31,7 +31,7 @@ cli_cmd() {
 	_cli_second=$(echo "${_cli_out}" | sed -n '2p')
 	case "${_cli_second}" in
 		ERROR:*)
-			# echo "${_cli_out}" >&2;
+			echo "${_cli_out}" >&2;
 			return 1 ;;
 		*) return ${_cli_rc} ;;
 	esac
