@@ -37,9 +37,7 @@ Add three user roles to the ExecutionEnvironment, this should fail since one rol
   ERROR: call (null) failed with status 1 - unknown error
   SoftwareModules.ExecEnv.1.ModifyAvailableRoles() returned
   ["",{"err_code":7004,"err_msg":"User role [norole] does not exist in Device.Users.Role."}]
-
-  DUStateChange! * FaultCode=7004 * (glob)
-  
+  [1]
 
 Two roles should still be present
   $ R "${S} && check_available_user_roles"
@@ -84,9 +82,8 @@ Install a container with user role that is not available. this should fail
   ERROR: call (null) failed with status 1 - unknown error
   SoftwareModules.InstallDU() returned
   ["",{"err_code":7037,"err_msg":"Sandbox [generic] does not have the required role [norole]"}]
-
-  DUStateChange! * FaultCode=7037 * (glob)
   
+  DUStateChange! * FaultCode=7037 * (glob)
 
 Install a container with user role that is available. this should succeed
 
@@ -128,6 +125,8 @@ Try removing active testrole2 from Devices.User.Role
   $ R "${S} && remove_user_role --rolename testrole2"
   
   ERROR: del Device.Users.Role.[Alias=="testrole2"]. failed * (glob)
+  
+  [1]
 
 Update the container to use no user roles
   $ R "${S} && update_ctr --version prplos-v1 --ee --uuid --privileged true --userroles"

@@ -25,15 +25,22 @@ CLI_JSON="cli_cmd -l -j"
 CLI="cli_cmd"
 
 ## Wrapper around ba-cli that returns error if second output line starts with 'ERROR:'
+## Uses a temp file to preserve ba-cli output exactly (including trailing newlines).
+## On success: prints to stdout. On error (second line starts with ERROR:): prints to stderr.
 cli_cmd() {
-	_cli_out=$(ba-cli "$@" 2>&1)
+	_cli_tmpfile=$(mktemp /tmp/cli_cmd_XXXXXX)
+	ba-cli "$@" >"${_cli_tmpfile}" 2>&1
 	_cli_rc=$?
-	_cli_second=$(echo "${_cli_out}" | sed -n '2p')
+	_cli_second=$(sed -n '2p' "${_cli_tmpfile}")
 	case "${_cli_second}" in
 		ERROR:*)
-			echo "${_cli_out}" >&2;
+			cat "${_cli_tmpfile}" >&2
+			rm -f "${_cli_tmpfile}"
 			return 1 ;;
-		*) return ${_cli_rc} ;;
+		*)
+			cat "${_cli_tmpfile}"
+			rm -f "${_cli_tmpfile}"
+			return ${_cli_rc} ;;
 	esac
 }
 
@@ -225,7 +232,7 @@ wait_ctr_up() {
 	elif [ -z "${uuid}" ]; then
 		echo "Missing UUID parameter: Cannot wait for container up"
 	else
-		duid=$(cli_json_safe "SoftwareModules.DeploymentUnit.[ UUID == \"${uuid}\" ].DUID?" -e @[*].*.DUID)
+		duid=$(cli_json_safe "SoftwareModules.DeploymentUnit.[ UUID == \"${uuid}\" ].DUID?" -e @[*].*.DUID 2>/dev/null)
 		if [ -z "${duid}" ]; then
 			echo "Container with UUID=${uuid} is not found"
 			return
