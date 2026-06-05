@@ -3,12 +3,7 @@ Create R alias:
   $ alias R="${CRAM_REMOTE_COMMAND:-}"
   $ . "${TESTDIR}/../scripts/wifi.sh"
 
-  $ R "logger -t cram 'Starting prplMesh static puncturing test (step 2) ...'"
-
-Check channels 40,44,48:
-
-  $ wifi_dm_radio_band 5 "StaticPuncturing.DisabledSubChannels?"
-  Device.WiFi.Radio.\d+.StaticPuncturing.DisabledSubChannels="40,44,48" (re)
+  $ R "logger -t cram 'Starting prplMesh static puncturing test 2/2 ...'"
 
 Push 0b0000 0d00 - clear Radio.StaticPuncturing.DisabledSubChannels list:
 
@@ -20,6 +15,11 @@ Push 0b0000 0d00 - clear Radio.StaticPuncturing.DisabledSubChannels list:
   ]
 
   $ sleep 5
+
+Check that static puncturing is disabled in hostpad config files:
+
+  $ R "grep punct_bitmap /tmp/wlan*_hapd.conf"
+  [1]
 
 Check channels puncturing deactivation:
 
@@ -35,7 +35,7 @@ Restore defaults:
   $ R "ba-cli -l \"X_PRPLWARE-COM_WiFiController.Network.AccessPoint.1.Security.ModeEnabled=\"WPA3-Personal-Transition\"\"" | sed '/^$/d'
   WPA3-Personal-Transition
 
-  $ R "ba-cli \"X_PRPLWARE-COM_WiFiController.Network.AccessPointCommit()\"" | tail -n +2 |  sed '/^$/d'
+  $ R "ba-cli \"X_PRPLWARE-COM_WiFiController.Network.AccessPointCommit()\"" | grep -Ev '^(>|$)'
   X_PRPLWARE-COM_WiFiController.Network.AccessPointCommit() returned
   [
       ""
@@ -87,6 +87,6 @@ Restart prplmesh:
   $ R "ba-cli -l X_PRPLWARE-COM_ProcessManager.PrplMesh.Enable=1" | tr -d '\n'
   1 (no-eol)
 
-  $ R "amx_wait_for X_PRPLWARE-COM_WiFiController.Network.Device.1"
+  $ R "amx_poll_object usp Device.WiFi.DataElements.Network.Device.1. 20"
 
   $ R logger -t cram "Test finished!"

@@ -18,7 +18,7 @@ Check PeriodicFileTransfer profile creation in the data model:
   $ R "ba-cli 'Device.PeriodicFileTransfer.Profile+{Alias=\"cram-Profile-1\"}'" > /dev/null
   $ R "ba-cli 'Device.PeriodicFileTransfer.Profile.cram-Profile-1.HTTP.URL=\"http://$SERVER_IP:8181\"'" > /dev/null
   $ R 'ba-cli "Device.PeriodicFileTransfer.Profile.cram-Profile-1.HTTP.Compression=\"None\""' > /dev/null; sleep 1
-  $ R 'ba-cli "Device.PeriodicFileTransfer.Profile.cram-Profile-1.?"' | grep -v '>'
+  $ R 'ba-cli "Device.PeriodicFileTransfer.Profile.cram-Profile-1.?"' | grep -Ev '^(>|$)'
   Device.PeriodicFileTransfer.Profile.(.+). (re)
   Device.PeriodicFileTransfer.Profile.(.+).Alias="cram-Profile-1" (re)
   Device.PeriodicFileTransfer.Profile.(.+).Name="" (re)
@@ -37,14 +37,13 @@ Check PeriodicFileTransfer profile creation in the data model:
   Device.PeriodicFileTransfer.Profile.(.+).HTTP.RetryMinimumWaitInterval=5 (re)
   Device.PeriodicFileTransfer.Profile.(.+).HTTP.URL="http://(.*):8181" (re)
   Device.PeriodicFileTransfer.Profile.(.+).HTTP.Username="" (re)
-  
 
 Check PeriodicFileTransfer transfer instance creation:
 
   $ R 'ba-cli "Device.PeriodicFileTransfer.Transfer.+{Alias=\"cram-Transfer-1\", ProfileReference=\"Device.PeriodicFileTransfer.Profile.cram-Profile-1\", Type=\"KernelFaults\"}"' > /dev/null
   $ R 'ba-cli "Device.PeriodicFileTransfer.Transfer.cram-Transfer-1.UploadInterval=3600"' > /dev/null
   $ R 'ba-cli "Device.PeriodicFileTransfer.Transfer.cram-Transfer-1.Enable=1"' > /dev/null; sleep 1
-  $ R 'ba-cli "Device.PeriodicFileTransfer.Transfer.cram-Transfer-1.?0"' | grep -v '>'
+  $ R 'ba-cli "Device.PeriodicFileTransfer.Transfer.cram-Transfer-1.?0"' | grep -Ev '^(>|$)'
   Device.PeriodicFileTransfer.Transfer.(.+). (re)
   Device.PeriodicFileTransfer.Transfer.(.+).Alias="cram-Transfer-1" (re)
   Device.PeriodicFileTransfer.Transfer.(.+).Enable=1 (re)
@@ -56,37 +55,34 @@ Check PeriodicFileTransfer transfer instance creation:
   Device.PeriodicFileTransfer.Transfer.(.+).TimeReference="1970-01-01T00:00:00Z" (re)
   Device.PeriodicFileTransfer.Transfer.(.+).Type="KernelFaults" (re)
   Device.PeriodicFileTransfer.Transfer.(.+).UploadInterval=3600 (re)
-  
+  Device.PeriodicFileTransfer.Transfer.(.+).X_PRPLWARE-COM_ForceTransfer=0 (re)
 
 Check PeriodicFileTransfer on demand file upload:
 
-  $ R 'ba-cli "Device.PeriodicFileTransfer.Transfer.cram-Transfer-1.ForceTransfer()"' | grep -v '>'; sleep 1
+  $ R 'ba-cli "Device.PeriodicFileTransfer.Transfer.cram-Transfer-1.ForceTransfer()"' | grep -Ev '^(>|$)'; sleep 1
   Device.PeriodicFileTransfer.Transfer.cram-Transfer-1.ForceTransfer() returned
   [
       {
           data = "Transfer ended with error code (0)"
       }
   ]
-  
 
   $ ls /tmp/130-periodicfileuploads/; rm /tmp/130-periodicfileuploads/*
   oops.tar
 
 Check PeriodicFileTransfer on demand file upload with GZIP compression:
 
-  $ R 'ba-cli "Device.PeriodicFileTransfer.Profile.cram-Profile-1.HTTP.Compression=GZIP"' | grep -v '>'; sleep 1
+  $ R 'ba-cli "Device.PeriodicFileTransfer.Profile.cram-Profile-1.HTTP.Compression=GZIP"' | grep -Ev '^(>|$)'; sleep 1
   Device.PeriodicFileTransfer.Profile.(.+).HTTP. (re)
   Device.PeriodicFileTransfer.Profile.(.+).HTTP.Compression="GZIP" (re)
-  
 
-  $ R 'ba-cli "Device.PeriodicFileTransfer.Transfer.cram-Transfer-1.ForceTransfer()"' | grep -v '>'
+  $ R 'ba-cli "Device.PeriodicFileTransfer.Transfer.cram-Transfer-1.ForceTransfer()"' | grep -Ev '^(>|$)'
   Device.PeriodicFileTransfer.Transfer.cram-Transfer-1.ForceTransfer() returned
   [
       {
           data = "Transfer ended with error code (0)"
       }
   ]
-  
 
   $ ls /tmp/130-periodicfileuploads/; rm /tmp/130-periodicfileuploads/*
   oops.tar
@@ -95,10 +91,9 @@ Check PeriodicFileTransfer on demand file upload with GZIP compression:
 Check PeriodicFileTransfer periodic upload with configured intervals
 
   $ R 'ba-cli "Device.PeriodicFileTransfer.Transfer.cram-Transfer-1.Enable=0"' > /dev/null
-  $ R 'ba-cli "Device.PeriodicFileTransfer.Transfer.cram-Transfer-1.UploadInterval=3"' | grep -v '>'; sleep 1
+  $ R 'ba-cli "Device.PeriodicFileTransfer.Transfer.cram-Transfer-1.UploadInterval=3"' | grep -Ev '^(>|$)'; sleep 1
   Device.PeriodicFileTransfer.Transfer.(.+). (re)
   Device.PeriodicFileTransfer.Transfer.(.+).UploadInterval=3 (re)
-  
   $ R 'ba-cli "Device.PeriodicFileTransfer.Transfer.cram-Transfer-1.Enable=1"' > /dev/null; sleep 7
   $ ls /tmp/130-periodicfileuploads/ |wc -l ; rm /tmp/130-periodicfileuploads/*
   2
@@ -112,7 +107,7 @@ Check PeriodicFileTransfer retry mechanism for failed uploads:
   $ R 'ba-cli "Device.PeriodicFileTransfer.Profile.cram-Profile-1.HTTP.RetryIntervalMultiplier=2000"' > /dev/null
   $ R 'ba-cli "Device.PeriodicFileTransfer.Profile.cram-Profile-1.HTTP.RetryMinimumWaitInterval=3"' > /dev/null
   $ R 'ba-cli "Device.PeriodicFileTransfer.Profile.cram-Profile-1.HTTP.RetryEnable=1"' > /dev/null; sleep 1
-  $ R 'ba-cli "Device.PeriodicFileTransfer.Profile.cram-Profile-1.?"' | grep -v '>'
+  $ R 'ba-cli "Device.PeriodicFileTransfer.Profile.cram-Profile-1.?"' | grep -Ev '^(>|$)'
   Device.PeriodicFileTransfer.Profile.(.+). (re)
   Device.PeriodicFileTransfer.Profile.(.+).Alias="cram-Profile-1" (re)
   Device.PeriodicFileTransfer.Profile.(.+).Name="" (re)
@@ -131,11 +126,9 @@ Check PeriodicFileTransfer retry mechanism for failed uploads:
   Device.PeriodicFileTransfer.Profile.(.+).HTTP.RetryMinimumWaitInterval=3 (re)
   Device.PeriodicFileTransfer.Profile.(.+).HTTP.URL="http://(.*):8181" (re)
   Device.PeriodicFileTransfer.Profile.(.+).HTTP.Username="" (re)
-  
   $ sleep 2
-  $ R 'ba-cli "Device.PeriodicFileTransfer.Transfer.cram-Transfer-1.Status?0"' | grep -v '>'
+  $ R 'ba-cli "Device.PeriodicFileTransfer.Transfer.cram-Transfer-1.Status?0"' | grep -Ev '^(>|$)'
   Device.PeriodicFileTransfer.Transfer.(.+).Status="Retrying" (re)
-  
   $ servefile -u /tmp/130-periodicfileuploads/ -p 8181 >/dev/null 2>&1 &
   $ servefile_pid="$!"
   $ sleep 6
@@ -151,19 +144,18 @@ Check PeriodicFileTransfer over HTTPS:
   $ servefile_pid="$!"
   $ sleep 2
   $ R "openssl s_client -connect \"$SERVER_IP:8181\" -showcerts < /dev/null 2> /dev/null | openssl x509 -outform PEM > /tmp/server-cert.crt"; sleep 1
-  $ R "echo '%populate{object Security{object CABundle{instance add(){parameter Enable=1; parameter CAFileURI=\"/tmp/server-cert.crt\";}}}}' > /etc/amx/tr181-security/extensions/01_cram_periodic_transfer.odl" ; sleep 1
+  $ R "echo '%populate{object Security{object CABundle{instance add("cram"){parameter Enable=1; parameter Name=cram; parameter CAFileURI=\"/tmp/server-cert.crt\";}}}}' > /etc/amx/tr181-security/defaults.d/01_cram_periodic_transfer.odl" ; sleep 1
   $ R '/etc/init.d/tr181-security restart'; sleep 1
   $ R 'ba-cli "Device.PeriodicFileTransfer.Profile.cram-Profile-1.Protocol=HTTPS"' > /dev/null; sleep 1
-  $ R 'ba-cli "Device.PeriodicFileTransfer.Profile.cram-Profile-1.HTTP.CABundle=Device.Security.CABundle.1"' > /dev/null; sleep 1
+  $ R 'ba-cli "Device.PeriodicFileTransfer.Profile.cram-Profile-1.HTTP.CABundle=Device.Security.CABundle.cram"' > /dev/null; sleep 1
   $ R "ba-cli 'Device.PeriodicFileTransfer.Profile.cram-Profile-1.HTTP.URL=\"https://$SERVER_IP:8181\"'" > /dev/null; sleep 1
-  $ R 'ba-cli "Device.PeriodicFileTransfer.Transfer.cram-Transfer-1.ForceTransfer()"' | grep -v '>' ; sleep 1
+  $ R 'ba-cli "Device.PeriodicFileTransfer.Transfer.cram-Transfer-1.ForceTransfer()"' | grep -Ev '^(>|$)' ; sleep 1
   Device.PeriodicFileTransfer.Transfer.cram-Transfer-1.ForceTransfer() returned
   [
       {
           data = "Transfer ended with error code (0)"
       }
   ]
-  
 
 Check PeriodicFileTransfer error code reporting for various failure scenarios:
 
@@ -171,7 +163,7 @@ Check PeriodicFileTransfer error code reporting for various failure scenarios:
   $ R 'ba-cli "Device.PeriodicFileTransfer.Profile.cram-Profile-1.Protocol=HTTP"' > /dev/null; sleep 1
   $ R 'ba-cli "Device.PeriodicFileTransfer.Profile.cram-Profile-1.HTTP.CABundle="' > /dev/null; sleep 1
   $ R "ba-cli 'Device.PeriodicFileTransfer.Profile.cram-Profile-1.HTTP.URL=\"http://$SERVER_IP:8181\"'" > /dev/null; sleep 1
-  $ R 'ba-cli "Device.PeriodicFileTransfer.Transfer.cram-Transfer-1.ForceTransfer()"' | grep -v '>'
+  $ R 'ba-cli "Device.PeriodicFileTransfer.Transfer.cram-Transfer-1.ForceTransfer()"' | grep -Ev '^(>|$)'
   ERROR: call (null) failed with status 1 - unknown error
   Device.PeriodicFileTransfer.Transfer.cram-Transfer-1.ForceTransfer() returned
   [
@@ -179,11 +171,10 @@ Check PeriodicFileTransfer error code reporting for various failure scenarios:
           data = "Transfer ended with error code (9015)"
       }
   ]
-  
   $ servefile -u /tmp/130-periodicfileuploads/ -p 8181 -a prpl:prpl >/dev/null 2>&1 &
   $ servefile_pid="$!"
   $ sleep 1
-  $ R 'ba-cli "Device.PeriodicFileTransfer.Transfer.cram-Transfer-1.ForceTransfer()"' | grep -v '>'; sleep 1
+  $ R 'ba-cli "Device.PeriodicFileTransfer.Transfer.cram-Transfer-1.ForceTransfer()"' | grep -Ev '^(>|$)'; sleep 1
   ERROR: call (null) failed with status 1 - unknown error
   Device.PeriodicFileTransfer.Transfer.cram-Transfer-1.ForceTransfer() returned
   [
@@ -191,14 +182,13 @@ Check PeriodicFileTransfer error code reporting for various failure scenarios:
           data = "Transfer ended with error code (9012)"
       }
   ]
-  
   $ kill -9 "$servefile_pid"
   $ servefile -u /tmp/130-periodicfileuploads/ -p 8181 --ssl >/dev/null 2>&1 &
   $ servefile_pid="$!"
   $ sleep 1
   $ R 'ba-cli "Device.PeriodicFileTransfer.Profile.cram-Profile-1.Protocol=HTTPS"' > /dev/null; sleep 1
   $ R "ba-cli 'Device.PeriodicFileTransfer.Profile.cram-Profile-1.HTTP.URL=\"https://$SERVER_IP:8181\"'" > /dev/null; sleep 1
-  $ R 'ba-cli "Device.PeriodicFileTransfer.Transfer.cram-Transfer-1.ForceTransfer()"' | grep -v '>'; sleep 1
+  $ R 'ba-cli "Device.PeriodicFileTransfer.Transfer.cram-Transfer-1.ForceTransfer()"' | grep -Ev '^(>|$)'; sleep 1
   ERROR: call (null) failed with status 1 - unknown error
   Device.PeriodicFileTransfer.Transfer.cram-Transfer-1.ForceTransfer() returned
   [
@@ -206,11 +196,10 @@ Check PeriodicFileTransfer error code reporting for various failure scenarios:
           data = "Transfer ended with error code (9003)"
       }
   ]
-  
 
 Cleanup test instances:
 
-  $ R 'rm -rf /etc/amx/tr181-security/extensions/01_cram_periodic_transfer.odl'
+  $ R 'rm -rf /etc/amx/tr181-security/defaults.d/01_cram_periodic_transfer.odl'
   $ R '/etc/init.d/tr181-security restart'
   $ R 'rm /tmp/server-cert.crt'
   $ rm -rf /tmp/130-periodicfileuploads/*

@@ -15,9 +15,16 @@ wifi_dm() {
   if [ -z "$tool" ]; then
     tool="usp-cli"
   fi
+  local protected="$4"
 
   local obj_name
   local res
+  local cli_pre_cmd=""
+
+  if [ "$protected" = "protected" ]; then
+    cli_pre_cmd="protected; "
+  fi
+
   # read object name
   # get str before a single = (ignoring ==) and extracts the string following the final dot,
   # or defaults to the last dot segment if no = is present.
@@ -26,7 +33,10 @@ wifi_dm() {
   # remove any trailing '?' from next grep
   obj_name=${obj_name%%\?*}
   R logger -t cram "set_wifi_dm: command ${base_path}${path} object ${obj_name}"
-  res=$(R "${tool} '${base_path}${path}'" | grep -v '>')
+
+  # run the command
+  res=$(R "${tool} '${cli_pre_cmd}${base_path}${path}'" | grep -v '>')
+
   if ! echo "$res" | grep -q "${obj_name}="; then
     if echo "$res" | grep -q "No data found"; then
       R logger -t cram "set_wifi_dm: ${base_path}${path} failed : No data found"
@@ -389,6 +399,62 @@ get_main_link_itf () {
   fi
 }
 
+# print ifindex of a specific AP
+# In : AP index
+# Out : ifindex
+get_ifindex () {
+  local ap_index=$1
+  ifname=$(wifi_dm "AccessPoint.${ap_index}.SSIDReference+.Name?" | cut -d'"' -f2)
+  R logger -t cram "get_ifindex: AccessPoint ${1} / interface $ifname"
+  R "iw dev ${ifname} info" | grep ifindex | sed 's/^[ \t]*//' | cut -d ' ' -f2
+}
+
+# Print sorted list of hostapd sockets inodes and pathes
+# In : no input
+# Out : list of hostapd sockets inodes and paths
+read_hostapd_inodes(){
+  ilist=$(R "ls -li /var/run/hostapd/wlan* 2>/dev/null" | awk '{print $1, $NF}' | sort)
+  echo "$ilist"
+}
+
+# print lines difference (diff command equivalent)
+# In : old string, new string
+# Out : lines differences with A:/R: prefix (Added/Removed)
+compare_list() {
+  awk -v l1="$1" -v l2="$2" '
+    function trim(s) { gsub(/^[ \t\r]+|[ \t\r]+$/, "", s); return s }
+    BEGIN {
+      n1 = split(l1, a, "\n")
+      n2 = split(l2, b, "\n")
+
+      for (i=1; i<=n1; i++) if ((a[i]=trim(a[i])) != "") s1[a[i]]
+      for (i=1; i<=n2; i++) if ((b[i]=trim(b[i])) != "") s2[b[i]]
+
+      for (i=1; i<=n1; i++) if (a[i] != "" && !(a[i] in s2)) print "R: " a[i]
+      for (i=1; i<=n2; i++) if (b[i] != "" && !(b[i] in s1)) print "A: " b[i]
+    }'
+}
+
+# compare ifindex of specific AP
+# In : AP index, old ifindex list
+# Out : OK / error message
+check_ifindexes () {
+  while [ "$#" -ge 2 ]; do
+    ap_index=$1
+    tgt_ifindex=$2
+
+    current_ifindex=$(get_ifindex "${ap_index}")
+
+    if [ "${current_ifindex}" = "${tgt_ifindex}" ]; then
+      echo "OK"
+    else
+      echo "AP${ap_index}: NOK (got ${current_ifindex}, expected ${tgt_ifindex})"
+    fi
+
+    shift 2
+  done
+}
+
 # print link number from iw output
 # In : APMLD index (ie MLDID)
 # Out : link number from iw output
@@ -448,4 +514,33 @@ dm_affilated_mac_list_from_mldid() {
   done
 
   printf "%b" "$output"
+}
+
+
+# Get current PowerType for the given radio index
+# Usage: dm_radio_powertype_get <radio_index>
+dm_radio_powertype_get() {
+  local radio_idx="${1:?Usage: dm_radio_powertype_get <radio_index>}"
+  R "ba-cli -j -l Device.WiFi.Radio.${radio_idx}.PowerType? | jsonfilter -e @[0]'[*].PowerType'" | sed '/^$/d'
+}
+
+# Set PowerType for the given radio index (e.g. VeryLowPower, Indoor, StandardPower)
+# Usage: dm_radio_powertype_set <radio_index> <PowerType>
+dm_radio_powertype_set() {
+  local radio_idx="${1:?Usage: dm_radio_powertype_set <radio_index> <VeryLowPower|Indoor|StandardPower>}"
+  local power_type="${2:?Usage: dm_radio_powertype_set <radio_index> <VeryLowPower|Indoor|StandardPower>}"
+  R "ba-cli -j -l Device.WiFi.Radio.${radio_idx}.PowerType=${power_type} | jsonfilter -e @[0]'[*].PowerType'" | sed '/^$/d'
+}
+
+# Get RegulatoryDomain (country code) for all radios
+# Usage: dm_radio_regulatory_domain_get
+dm_radio_regulatory_domain_get() {
+  R "ba-cli -j -l Device.WiFi.Radio.*.RegulatoryDomain? | jsonfilter -e @[0]'[*].RegulatoryDomain'" | sed '/^$/d'
+}
+
+# Set RegulatoryDomain (country code) for all radios
+# Usage: dm_radio_regulatory_domain_set <country_code>
+dm_radio_regulatory_domain_set() {
+  local country="${1:?Usage: dm_radio_regulatory_domain_set <country_code>}"
+  R "ba-cli -j -l Device.WiFi.Radio.*.RegulatoryDomain=${country} | jsonfilter -e @[0]'[*].RegulatoryDomain'" | sed '/^$/d'
 }

@@ -1,7 +1,7 @@
 .testbed:
   stage: run
   image: "$CI_REGISTRY_IMAGE/$CI_DESIGNATED_BRANCH_SLUG/testbed:latest"
-  timeout: 64 minutes
+  timeout: 80 minutes
   rules:
     - if: '$CI_PIPELINE_SOURCE == "schedule"'
       when: never
@@ -22,16 +22,21 @@
     DUT_SSH_CONNECT_ATTEMPTS: 3
     DUT_TR181_WAN_INTERFACE: Device.Ethernet.Link.2.
     DUT_TR181_LAN_INTERFACE: Device.Ethernet.Link.3.
+    DUT_OBUSPA_VERBOSE_LEVEL: ''
+    DUT_OBUSPA_PROTOCOL_TRACE: ''
     TEST_SETUP_TEARDOWN_DURATION: 360
     CRAM_REMOTE_COMMAND: ssh root@$TARGET_LAN_IP
     CRAM_REMOTE_COPY: scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
     CRAM_TEST_SUITE: |
       .gitlab/tests/cram/generic/acceleration-plan-components
       .gitlab/tests/cram/$DUT_BOARD/acceleration-plan-components
+      .gitlab/tests/cram/generic/lcm
       .gitlab/tests/cram/generic
       .gitlab/tests/cram/$DUT_BOARD
     CRAM_TEST_SUITE_POST: |
       .gitlab/tests/cram/post/generic
+    DUT_INIT_SCRIPTS: |
+      .gitlab/scripts/dut-init/dut-change-fail-action-to-restart.sh
 
   before_script:
     - source .gitlab/scripts/helpers.sh
@@ -54,14 +59,11 @@
     - sudo ip link set $TESTBED_WAN_INTERFACE up 2> /dev/null
     - sleep 10
 
+    - sudo sed -i 's|http://deb.debian.org/debian|http://archive.debian.org/debian|g' /etc/apt/sources.list 2>/dev/null
+    - sudo sed -i 's|http://deb.debian.org/debian-security|http://archive.debian.org/debian-security|g' /etc/apt/sources.list 2>/dev/null
+    - sudo apt-get update && sudo apt-get install --yes --no-install-recommends minidlna avahi-daemon avahi-utils dbus
+
     - mkdir -p ~/.ssh; chmod 700 ~/.ssh
-    - >
-      if echo "$CI_RUNNER_DESCRIPTION" | grep -q testbed-01; then
-        eval $(ssh-agent -s)
-        echo "$TESTBED_SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-        ssh-keyscan $TESTBED_UART_RELAY_HOST > ~/.ssh/known_hosts 2> /dev/null
-        chmod 644 ~/.ssh/known_hosts
-      fi
 
     - |
       echo "Using firmware image $TFTP_IMAGE_PATH/$TFTP_IMAGE_FILENAME"
@@ -96,9 +98,19 @@
     - time ssh -o BatchMode=yes -o StrictHostKeyChecking=no -o ConnectionAttempts=$DUT_SSH_CONNECT_ATTEMPTS -o ConnectTimeout=$DUT_SSH_CONNECT_TIMEOUT root@$TARGET_LAN_IP 'exit 0'
 
     - ssh-keyscan $TARGET_LAN_IP >> ~/.ssh/known_hosts 2> /dev/null
+    - >
+      if [ -n "${DUT_OBUSPA_VERBOSE_LEVEL:-}" ] ||
+         [ -n "${DUT_OBUSPA_PROTOCOL_TRACE:-}" ]; then
+        .gitlab/scripts/dut-init/dut-configure-obuspa-logging.sh;
+      fi
     - ssh root@$TARGET_LAN_IP 'logger -t CI -p local0.info "System accessible over SSH, $(uptime -p)"' || true
     - ssh root@$TARGET_LAN_IP "cat /var/log/messages" > syslog-$LABGRID_TARGET.txt 2> /dev/null || true
     - ssh root@$TARGET_LAN_IP "ubus call system board" | tee system-$LABGRID_TARGET.json
+
+    - >
+      for dut_init_script in $DUT_INIT_SCRIPTS;
+        do echo "Running $dut_init_script"; "${CI_PROJECT_DIR}/$dut_init_script";
+      done
 
     - section_end "dut-system-info"
 
@@ -157,13 +169,6 @@
       }
 
     - mkdir -p ~/.ssh; chmod 700 ~/.ssh
-    - >
-      if echo "$CI_RUNNER_DESCRIPTION" | grep -q testbed-01; then
-        eval $(ssh-agent -s)
-        echo "$TESTBED_SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-        ssh-keyscan $TESTBED_UART_RELAY_HOST > ~/.ssh/known_hosts 2> /dev/null
-        chmod 644 ~/.ssh/known_hosts
-      fi
 
     - >
       if echo "$CI_RUNNER_DESCRIPTION" | grep -q testbed-02; then
@@ -201,6 +206,8 @@
     when: always
     paths:
       - .gitlab/tests/cram/**/*.t.err
+      - .gitlab/tests/cram/**/*.actual
+      - .gitlab/tests/cram/**/*.diff
       - etc
       - prplmesh_beerocks_logs
       - debug-information-$LABGRID_TARGET.txt
@@ -217,5 +224,3 @@
 
 .testbed true.cz:
   extends: .testbed
-  variables:
-    TESTBED_UART_RELAY_HOST: uart-relay.testbed.vpn.true.cz

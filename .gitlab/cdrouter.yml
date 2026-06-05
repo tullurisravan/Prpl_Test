@@ -11,7 +11,15 @@
     CDROUTER_CONFIG_WIFI_BEACON_RSN_CIPHER: 'CCMP-128'
     CDROUTER_CONFIG_WIFI_LAN_CHANNEL: 6
     CDROUTER_CONFIG_WIFI_LAN_SSID: 'prplOS'
+    CDROUTER_CONFIG_USP_CONTROLLER_MTP: mqtt
+    CDROUTER_CONFIG_USP_CONTROLLER_MTP_ENCRYPTION: 'yes'
+    CDROUTER_CONFIG_USP_CONTROLLER_DOMAIN: controller.cdroutertest.com
+    CDROUTER_CONFIG_USP_CONTROLLER_MTP_CERT_PATH: /usr/cdrouter-data/prplos-ci/usp-ssl-certs/server.crt
+    CDROUTER_CONFIG_USP_CONTROLLER_MTP_CA_CERT_PATH: /usr/cdrouter-data/prplos-ci/usp-ssl-certs/ca.crt
     CDROUTER_TEST_CONFIG: generic
+    CDROUTER_DUT_INIT_USP_MTP_SCRIPT: .gitlab/scripts/dut-init/cdrouter-dut-configure-usp-mqtt.sh
+    DUT_OBUSPA_VERBOSE_LEVEL: ''
+    DUT_OBUSPA_PROTOCOL_TRACE: ''
     DUT_SLEEP_AFTER_BOOT: 90
     TEST_SETUP_TEARDOWN_DURATION: 360
     CDROUTER_LAN_INTERFACE: eth1
@@ -20,6 +28,9 @@
     CDROUTER_ETH0_MAC_ADDRESS_TESTBED_02: 00:03:2d:49:2e:c8
 
   before_script:
+    - export TEST_PACKAGE="$(echo $CI_JOB_NAME | sed 's/\(\w\) .*/\1/')"
+    - .gitlab/scripts/testbed-cdrouter.py package_validate $TEST_PACKAGE
+
     - source .gitlab/scripts/helpers.sh
     - section_start "testbed-setup" "Testbed Setup" "collapsed"
 
@@ -34,13 +45,6 @@
     - sleep 10
 
     - mkdir -p ~/.ssh; chmod 700 ~/.ssh
-    - >
-      if echo "$CI_RUNNER_DESCRIPTION" | grep -q testbed-01; then
-        eval $(ssh-agent -s)
-        echo "$TESTBED_SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-        ssh-keyscan $TESTBED_UART_RELAY_HOST > ~/.ssh/known_hosts 2> /dev/null
-        chmod 644 ~/.ssh/known_hosts
-      fi
 
     - |
       echo "Using firmware image $TFTP_IMAGE_PATH/$TFTP_IMAGE_FILENAME"
@@ -76,12 +80,23 @@
     - time ssh -o BatchMode=yes -o StrictHostKeyChecking=no -o ConnectionAttempts=$DUT_SSH_CONNECT_ATTEMPTS -o ConnectTimeout=$DUT_SSH_CONNECT_TIMEOUT root@$TARGET_LAN_IP 'exit 0'
 
     - ssh-keyscan $TARGET_LAN_IP >> ~/.ssh/known_hosts 2> /dev/null
+    - >
+      if [ -n "${DUT_OBUSPA_VERBOSE_LEVEL:-}" ] ||
+         [ -n "${DUT_OBUSPA_PROTOCOL_TRACE:-}" ]; then
+        .gitlab/scripts/dut-init/dut-configure-obuspa-logging.sh;
+      fi
     - ssh root@$TARGET_LAN_IP 'logger -t CI -p local0.info "System accessible over SSH, $(uptime -p)"' || true
     - ssh root@$TARGET_LAN_IP "cat /var/log/messages" > syslog-$LABGRID_TARGET.txt 2> /dev/null || true
     - ssh root@$TARGET_LAN_IP "ubus call system board" | tee system-$LABGRID_TARGET.json
 
     - section_end "dut-system-info"
     - section_start "dut-init" "DUT Initialization" "collapsed"
+
+    - >
+      if [ -n "${CDROUTER_DUT_INIT_USP_MTP_SCRIPT:-}" ]; then
+        echo "Running $CDROUTER_DUT_INIT_USP_MTP_SCRIPT";
+        "${CI_PROJECT_DIR}/$CDROUTER_DUT_INIT_USP_MTP_SCRIPT";
+      fi
 
     - >
       for dut_init_script in $DUT_INIT_SCRIPTS;
@@ -116,7 +131,7 @@
 
     - export TEST_PACKAGE="$(echo $CI_JOB_NAME | sed 's/\(\w\) .*/\1/')"
     - .gitlab/scripts/testbed-cdrouter.py config_import $CDROUTER_TEST_CONFIG
-    - .gitlab/scripts/testbed-cdrouter.py package_import $TEST_PACKAGE.gz
+    - .gitlab/scripts/testbed-cdrouter.py package_apply $TEST_PACKAGE
 
     - section_end "cdrouter-configuration"
     - >
@@ -164,13 +179,6 @@
       .gitlab/scripts/cdrouter-pretty-failures.awk cdrouter-results/*.txt
 
     - mkdir -p ~/.ssh; chmod 700 ~/.ssh
-    - >
-      if echo "$CI_RUNNER_DESCRIPTION" | grep -q testbed-01; then
-        eval $(ssh-agent -s)
-        echo "$TESTBED_SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-        ssh-keyscan $TESTBED_UART_RELAY_HOST > ~/.ssh/known_hosts 2> /dev/null
-        chmod 644 ~/.ssh/known_hosts
-      fi
 
     - >
       if echo "$CI_RUNNER_DESCRIPTION" | grep -q testbed-02; then

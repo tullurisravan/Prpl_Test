@@ -4,7 +4,7 @@ Create R alias:
 
 Check that ubus has expected datamodels available:
 
-  $ R "ubus list | grep '[[:upper:]]' | grep -v -e '\.[[:digit:]]' -e '^Cellular' -e 'Device.Cellular' -e 'WiFi.Vendor.Daemon' -e 'WiFi.Vendor.ModuleMode' -e '^Bridging.Bridge.[SV]' -e 'WiFi.Vendor.ReconfManager'"
+  $ R "ubus list | grep '[[:upper:]]' | grep -v -e '\.[[:digit:]]' -e '^Cellular' -e 'Device.Cellular' -e 'WiFi.Vendor.Daemon' -e 'WiFi.Vendor.ModuleMode' -e '^WiFi.Vendor.MLO' -e '^Bridging.Bridge.[SV]' -e 'WiFi.Vendor.ReconfManager'"
   ACLManager
   ACLManager.Role
   Bridging
@@ -116,10 +116,13 @@ Check that ubus has expected datamodels available:
   Device.Routing
   Device.SFPs
   Device.SSH
+  Device.Schedules
   Device.Security
+  Device.SessionManagement
   Device.SoftwareModules
   Device.Syslog
   Device.Time
+  Device.TrustedElements
   Device.UPnP
   Device.UPnP.Description
   Device.UPnP.Discovery
@@ -168,6 +171,7 @@ Check that ubus has expected datamodels available:
   Ethernet.Link
   Ethernet.RMONStats
   Ethernet.VLANTermination
+  Ethernet.WoL
   Firewall
   Firewall.Chain
   Firewall.ConnectionTracking
@@ -317,6 +321,8 @@ Check that ubus has expected datamodels available:
   Reboot.Reboot
   Reboot.X_PRPLWARE-COM_Reasons
   Rlyeh
+  Rlyeh.Authentication
+  Rlyeh.Authentication.Stats
   Rlyeh.Images
   RouterAdvertisement
   RouterAdvertisement.InterfaceSetting
@@ -328,17 +334,36 @@ Check that ubus has expected datamodels available:
   Routing.RouteInformation.InterfaceSetting
   Routing.Router
   SFPs
+  SFPs.AllowedSFPs
+  SFPs.AllowedSFPs.AllowedSFP
   SFPs.Mgmt
   SFPs.Mgmt.SFF8472
   SFPs.SFPCage
-  SFPs.X_PRPLWARE-COM_SFPDatabase
+  SFPs.SFPProperties
+  SFPs.SFPProperties.SFP
   SSH
   SSH.AuthorizedKey
   SSH.Server
+  Schedules
+  Schedules.Schedule
   Security
   Security.CABundle
   Security.Certificate
+  SessionManagement
+  SessionManagement.PDN
+  SessionManagement.PDP
+  SessionManagement.PDU
+  SessionManagement.PDU.NetworkSlice
+  SessionManagement.PDU.QoSFlow
+  SessionManagement.PDU.QoSRule
+  SessionManagement.PDU.QoSRule.Filter
+  SessionManagement.Session
+  SessionManagement.Session.IPv4Address
+  SessionManagement.Session.IPv6Address
+  SessionManagement.Session.PCO
   SoftwareModules
+  SoftwareModules.Config
+  SoftwareModules.Config.Repository
   SoftwareModules.DeploymentUnit
   SoftwareModules.ExecEnv
   SoftwareModules.ExecutionUnit
@@ -366,6 +391,12 @@ Check that ubus has expected datamodels available:
   Timingila.CthulhuAdapters.CthulhuCommandMapping
   Timingila.CthulhuAdapters.SoftwareModulesFuncArgsOverload
   Timingila.CthulhuAdapters.SoftwareModulesTable
+  Timingila.RlyehPluginsConfig
+  Timingila.RlyehPluginsInfo
+  Timingila.RlyehPluginsInfo.LoadedPlugins
+  TrustedElements
+  TrustedElements.SIM
+  TrustedElements.SIM.Profile
   UPnP
   UPnP.Device
   UPnP.Device.Capabilities
@@ -485,6 +516,7 @@ Check that ubus has expected datamodels available:
   X_PRPLWARE-COM_WiFiController.Network.Device.Radio
   X_PRPLWARE-COM_WiFiController.Network.Device.Radio.BSS
   X_PRPLWARE-COM_WiFiController.Network.Device.Radio.BSS.MultiAPSteering
+  X_PRPLWARE-COM_WiFiController.Network.Device.Radio.BSS.QMDescriptor
   X_PRPLWARE-COM_WiFiController.Network.Device.Radio.BSS.STA
   X_PRPLWARE-COM_WiFiController.Network.Device.Radio.BSS.STA.HTCapabilities
   X_PRPLWARE-COM_WiFiController.Network.Device.Radio.BSS.STA.MeasurementReport
@@ -495,6 +527,7 @@ Check that ubus has expected datamodels available:
   X_PRPLWARE-COM_WiFiController.Network.Device.Radio.BSS.STA.VHTCapabilities
   X_PRPLWARE-COM_WiFiController.Network.Device.Radio.BSS.STA.WiFi6Capabilities
   X_PRPLWARE-COM_WiFiController.Network.Device.Radio.BSS.STA.WiFi6Capabilities.MCSNSS
+  X_PRPLWARE-COM_WiFiController.Network.Device.Radio.BSS.SetQoSManagementInput
   X_PRPLWARE-COM_WiFiController.Network.Device.Radio.BackhaulSta
   X_PRPLWARE-COM_WiFiController.Network.Device.Radio.CACCapability
   X_PRPLWARE-COM_WiFiController.Network.Device.Radio.CACCapability.CACMethod
@@ -541,11 +574,12 @@ Check that ubus has expected datamodels available:
   X_PRPLWARE-COM_WiFiController.Network.Device.bSTAMLD
   X_PRPLWARE-COM_WiFiController.Network.Device.bSTAMLD.bSTAMLDConfig
   X_PRPLWARE-COM_WiFiController.Network.MultiAPSteeringSummaryStats
-  X_PRPLWARE-COM_WiFiController.Network.X-PRPL_ORG_Group
+  X_PRPLWARE-COM_WiFiController.Network.X_PRPLWARE-COM_Group
   X_PRPLWARE-COM_WiFiMapped
   X_PRPLWARE-COM_WiFiMapped.WiFi
   X_PRPLWARE-COM_WiFiMapped.WiFi.DataElements
   X_PRPLWARE-COM_WiFiMapped.WiFi.DataElements.X_PRPLWARE-COM_Controller
+  X_PRPLWARE-COM_WiFiMapped.WiFi.X_PRPLWARE-COM_ProcessManager
   X_PRPLWARE-COM_WiFiMapped.WiFi.X_PRPLWARE-COM_WiFiSensing
   X_PRPLWARE-COM_WiFiSensing
   X_PRPLWARE-COM_WiFiSensing.Session

@@ -24,20 +24,13 @@ Check default SecMode:
   $ R logger -t cram "Check default SecMode"
 
   $ wifi_dm "AccessPoint.1.Security.ModeEnabled?"
-  Device.WiFi.AccessPoint.1.Security.ModeEnabled="WPA2-WPA3-Personal"
+  Device.WiFi.AccessPoint.1.Security.ModeEnabled="WPA3-Personal-Transition"
 
   $ wifi_dm "AccessPoint.2.Security.ModeEnabled?"
-  Device.WiFi.AccessPoint.2.Security.ModeEnabled="WPA2-WPA3-Personal"
+  Device.WiFi.AccessPoint.2.Security.ModeEnabled="WPA3-Personal-Transition"
 
   $ wifi_dm "AccessPoint.3.Security.ModeEnabled?"
   Device.WiFi.AccessPoint.3.Security.ModeEnabled="WPA3-Personal"
-
-Provisory: On OSPv2 add WPA3-Personal compatibility to the available security modes for 6GHz VAPs:
-
-  $ tmp=$(R "ba-cli -l \"WiFi.AccessPoint.3.Security.ModesAvailable?\"" | sed '/^$/d')
-  $ R "ba-cli -l \"WiFi.AccessPoint.3.Security.ModesAvailable=\'$tmp,WPA3-Personal-Compatibility\'\"" > /dev/null
-  $ tmp=$(R "ba-cli -l \"WiFi.AccessPoint.6.Security.ModesAvailable?\"" | sed '/^$/d')
-  $ R "ba-cli \"WiFi.AccessPoint.6.Security.ModesAvailable=\'$tmp,WPA3-Personal-Compatibility\'\"" > /dev/null
 
 Check if private/guest VAPs contain WPA3-Personal-Compatibility in the Security.ModesAvailable list:
 
@@ -105,10 +98,10 @@ Create one instances of Network.AccessPoint with WPA3-Personal enabled and push 
 
   $ R logger -t cram "Create instances of Network.AccessPoint and push them to the agent"
 
-  $ R "ba-cli \"X_PRPLWARE-COM_WiFiController.Network.AccessPoint+(Band2_4G=1,Band5GH=1,Band5GL=1,Band6G=1,MultiApMode=\"Fronthaul+Backhaul\",X_PRPLWARE_VapType=\"home\",SSID=\"SSID_WPA3CM\",Security.ModeEnabled=\"WPA3-Personal\",Security.KeyPassphrase=\"password\",Enable=1)\"" | tail -n +2 | sed '/^$/d'
+  $ R "ba-cli \"X_PRPLWARE-COM_WiFiController.Network.AccessPoint+(Band2_4G=1,Band5GH=1,Band5GL=1,Band6G=1,MultiApMode=\"Fronthaul+Backhaul\",X_PRPLWARE-COM_VapType=\"home\",SSID=\"SSID_WPA3CM\",Security.ModeEnabled=\"WPA3-Personal\",Security.KeyPassphrase=\"password\",Enable=1)\"" | grep -Ev '^(>|$)'
   X_PRPLWARE-COM_WiFiController.Network.AccessPoint.* (re)
 
-  $ R "ba-cli \"X_PRPLWARE-COM_WiFiController.Network.AccessPointCommit()\"" | tail -n +2 |  sed '/^$/d'
+  $ R "ba-cli \"X_PRPLWARE-COM_WiFiController.Network.AccessPointCommit()\"" | grep -Ev '^(>|$)'
   X_PRPLWARE-COM_WiFiController.Network.AccessPointCommit() returned
   [
       ""
@@ -158,7 +151,7 @@ Push WPA3-Personal-Compatibility:
   $ R "ba-cli -l X_PRPLWARE-COM_WiFiController.Network.AccessPoint.1.Security.ModeEnabled=\"WPA3-Personal-Compatibility\"" | sed '/^$/d'
   WPA3-Personal-Compatibility
 
-  $ R "ba-cli \"X_PRPLWARE-COM_WiFiController.Network.AccessPointCommit()\"" | tail -n +2 |  sed '/^$/d'
+  $ R "ba-cli \"X_PRPLWARE-COM_WiFiController.Network.AccessPointCommit()\"" | grep -Ev '^(>|$)'
   X_PRPLWARE-COM_WiFiController.Network.AccessPointCommit() returned
   [
       ""
@@ -209,7 +202,7 @@ Restore security modes in two steps: WPA3 Transition to 2.4GHz/5GHz and then WPA
   $ R "ba-cli -l \"X_PRPLWARE-COM_WiFiController.Network.AccessPoint.1.Security.ModeEnabled=\"WPA3-Personal-Transition\"\"" | sed '/^$/d'
   WPA3-Personal-Transition
 
-  $ R "ba-cli \"X_PRPLWARE-COM_WiFiController.Network.AccessPointCommit()\"" | tail -n +2 |  sed '/^$/d'
+  $ R "ba-cli \"X_PRPLWARE-COM_WiFiController.Network.AccessPointCommit()\"" | grep -Ev '^(>|$)'
   X_PRPLWARE-COM_WiFiController.Network.AccessPointCommit() returned
   [
       ""
@@ -217,7 +210,7 @@ Restore security modes in two steps: WPA3 Transition to 2.4GHz/5GHz and then WPA
 
   $ sleep 5
 
-  $ R "ba-cli \"X_PRPLWARE-COM_WiFiController.Network.AccessPoint.1.{Band2_4G=0,Band5GH=0,Band5GL=0,Band6G=1}\"" | sed '/^$/d' | tail -n +3
+  $ R "ba-cli \"X_PRPLWARE-COM_WiFiController.Network.AccessPoint.1.{Band2_4G=0,Band5GH=0,Band5GL=0,Band6G=1}\"" | grep -Ev '^(>|$)' | sed '1d'
   X_PRPLWARE-COM_WiFiController.Network.AccessPoint.1.Band2_4G=0
   X_PRPLWARE-COM_WiFiController.Network.AccessPoint.1.Band5GH=0
   X_PRPLWARE-COM_WiFiController.Network.AccessPoint.1.Band5GL=0
@@ -226,7 +219,7 @@ Restore security modes in two steps: WPA3 Transition to 2.4GHz/5GHz and then WPA
   $ R "ba-cli -l \"X_PRPLWARE-COM_WiFiController.Network.AccessPoint.1.Security.ModeEnabled=\"WPA3-Personal\"\"" | sed '/^$/d'
   WPA3-Personal
 
-  $ R "ba-cli \"X_PRPLWARE-COM_WiFiController.Network.AccessPointCommit()\"" | tail -n +2 |  sed '/^$/d'
+  $ R "ba-cli \"X_PRPLWARE-COM_WiFiController.Network.AccessPointCommit()\"" | grep -Ev '^(>|$)'
   X_PRPLWARE-COM_WiFiController.Network.AccessPointCommit() returned
   [
       ""

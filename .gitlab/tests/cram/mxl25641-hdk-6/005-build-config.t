@@ -21,6 +21,7 @@ Assure expected build configuration (PCF-1413):
   CONFIG_BIND_ENABLE_DOH=y
   CONFIG_BUILD_LOG=y
   CONFIG_BUILD_SDK="prplos"
+  CONFIG_BUSYBOX_CONFIG_DEVMEM=y
   CONFIG_BUSYBOX_CONFIG_FEATURE_FIND_INUM=y
   CONFIG_BUSYBOX_CONFIG_FEATURE_TFTP_GET=y
   CONFIG_BUSYBOX_CONFIG_FEATURE_TFTP_PUT=y
@@ -130,11 +131,12 @@ Assure expected build configuration (PCF-1413):
   CONFIG_KERNEL_CGROUP_DEVICE=y
   CONFIG_KERNEL_CGROUP_FREEZER=y
   CONFIG_KERNEL_CGROUP_PERF=y
+  CONFIG_KERNEL_DEVMEM=y
   CONFIG_KERNEL_FTRACE=y
   CONFIG_KERNEL_GIT_CLONE_URI="https://github.com/maxlinear/linux.git"
   CONFIG_KERNEL_GIT_LOCAL_REPOSITORY=""
   CONFIG_KERNEL_GIT_MIRROR_HASH=""
-  CONFIG_KERNEL_GIT_REF="UPDK_9.2.4"
+  CONFIG_KERNEL_GIT_REF="UPDK_9.2.10-1"
   CONFIG_KERNEL_MEMCG_SWAP_ENABLED=y
   CONFIG_KERNEL_NET_CLS_CGROUP=y
   CONFIG_KERNEL_PERF_EVENTS=y
@@ -173,6 +175,7 @@ Assure expected build configuration (PCF-1413):
   CONFIG_MOSQUITTO_LWS=y
   CONFIG_MOSQUITTO_PASSWD=y
   CONFIG_MXL_WLAN_OSS_BUILD=y
+  CONFIG_OBUSPA_WEBSOCKET_MTP_SUPPORT=y
   CONFIG_ODHCP6C_ENABLE_UBUS=y
   CONFIG_PACKAGE_acl=y
   CONFIG_PACKAGE_acl-manager=y
@@ -195,6 +198,7 @@ Assure expected build configuration (PCF-1413):
   CONFIG_PACKAGE_ca-certificates=y
   CONFIG_PACKAGE_cellular-manager=y
   CONFIG_PACKAGE_chrony-prpl=y
+  CONFIG_PACKAGE_conntrack=y
   CONFIG_PACKAGE_cthulhu=y
   CONFIG_PACKAGE_cthulhu-capabilities=y
   CONFIG_PACKAGE_cthulhu-dhcpc=y
@@ -248,6 +252,7 @@ Assure expected build configuration (PCF-1413):
   CONFIG_PACKAGE_gpon-omci-onu-binary=y
   CONFIG_PACKAGE_hosts-manager=y
   CONFIG_PACKAGE_ifxos=y
+  CONFIG_PACKAGE_image-authentication=y
   CONFIG_PACKAGE_ip-bridge=y
   CONFIG_PACKAGE_ip-full=y
   CONFIG_PACKAGE_ip-manager=y
@@ -349,7 +354,6 @@ Assure expected build configuration (PCF-1413):
   CONFIG_PACKAGE_kmod-mxl_eth_drv=y
   CONFIG_PACKAGE_kmod-mxl_gpy=y
   CONFIG_PACKAGE_kmod-mxl_lgm_toe=y
-  CONFIG_PACKAGE_kmod-mxl_pon_hgu_vuni_lgm=y
   CONFIG_PACKAGE_kmod-mxl_vpn=y
   CONFIG_PACKAGE_kmod-nat46=y
   CONFIG_PACKAGE_kmod-nf-conncount=y
@@ -359,6 +363,8 @@ Assure expected build configuration (PCF-1413):
   CONFIG_PACKAGE_kmod-nf-nat6=y
   CONFIG_PACKAGE_kmod-nf-nathelper=y
   CONFIG_PACKAGE_kmod-nf-nathelper-extra=y
+  CONFIG_PACKAGE_kmod-nfnetlink-cthelper=y
+  CONFIG_PACKAGE_kmod-nfnetlink-cttimeout=y
   CONFIG_PACKAGE_kmod-nfnetlink-queue=y
   CONFIG_PACKAGE_kmod-nft-bridge=y
   CONFIG_PACKAGE_kmod-nft-fib=m
@@ -439,6 +445,7 @@ Assure expected build configuration (PCF-1413):
   CONFIG_PACKAGE_libatomic=y
   CONFIG_PACKAGE_libattr=y
   CONFIG_PACKAGE_libblkid=y
+  CONFIG_PACKAGE_libbotan=y
   CONFIG_PACKAGE_libbpf=y
   CONFIG_PACKAGE_libbsd=y
   CONFIG_PACKAGE_libbz2=y
@@ -490,6 +497,8 @@ Assure expected build configuration (PCF-1413):
   CONFIG_PACKAGE_libmsgapi=y
   CONFIG_PACKAGE_libncurses=y
   CONFIG_PACKAGE_libnetfilter-conntrack=y
+  CONFIG_PACKAGE_libnetfilter-cthelper=y
+  CONFIG_PACKAGE_libnetfilter-cttimeout=y
   CONFIG_PACKAGE_libnetfilter-queue=y
   CONFIG_PACKAGE_libnetlink-utils=y
   CONFIG_PACKAGE_libnetmodel=y
@@ -507,6 +516,7 @@ Assure expected build configuration (PCF-1413):
   CONFIG_PACKAGE_libopenssl-conf=y
   CONFIG_PACKAGE_libp11=y
   CONFIG_PACKAGE_libpacket-interception=y
+  CONFIG_PACKAGE_libpass=y
   CONFIG_PACKAGE_libpci=y
   CONFIG_PACKAGE_libpcp=y
   CONFIG_PACKAGE_libpcre2=y
@@ -518,11 +528,13 @@ Assure expected build configuration (PCF-1413):
   CONFIG_PACKAGE_libqosnode=y
   CONFIG_PACKAGE_libqrtr-glib=y
   CONFIG_PACKAGE_librlyeh=y
+  CONFIG_PACKAGE_librnp=y
   CONFIG_PACKAGE_librt=y
   CONFIG_PACKAGE_libsafec3-7=y
   CONFIG_PACKAGE_libsahtrace=y
   CONFIG_PACKAGE_libscapi=y
   CONFIG_PACKAGE_libseccomp=y
+  CONFIG_PACKAGE_libsexpp=y
   CONFIG_PACKAGE_libsmartcols=y
   CONFIG_PACKAGE_libsqlite3=y
   CONFIG_PACKAGE_libss=y
@@ -622,11 +634,12 @@ Assure expected build configuration (PCF-1413):
   CONFIG_PACKAGE_mod-ra-radvd=y
   CONFIG_PACKAGE_mod-routing-dhcp=y
   CONFIG_PACKAGE_mod-sahtrace=y
+  CONFIG_PACKAGE_mod-scheduler-amxp=y
   CONFIG_PACKAGE_mod-usp-registration=y
   CONFIG_PACKAGE_mod-vlan-ioctl=y
   CONFIG_PACKAGE_mod-vlan-uci=y
   CONFIG_PACKAGE_mod-wanmgr-sfp=y
-  CONFIG_PACKAGE_mod-wanmgr-system=y
+  CONFIG_PACKAGE_mod-wanmgr-system-ospv2=y
   CONFIG_PACKAGE_mod-whm=y
   CONFIG_PACKAGE_mod-xpon-prpl=y
   CONFIG_PACKAGE_mod-xpon-prpl-mock=m
@@ -766,6 +779,7 @@ Assure expected build configuration (PCF-1413):
   CONFIG_PACKAGE_timingila=y
   CONFIG_PACKAGE_timingila-cthulhu=y
   CONFIG_PACKAGE_timingila-rlyeh=y
+  CONFIG_PACKAGE_timingila-rlyeh-security=y
   CONFIG_PACKAGE_tr069-manager=y
   CONFIG_PACKAGE_tr143diagtool=y
   CONFIG_PACKAGE_tr181-bridging=y
@@ -801,6 +815,7 @@ Assure expected build configuration (PCF-1413):
   CONFIG_PACKAGE_tr181-qos=y
   CONFIG_PACKAGE_tr181-rest-api=y
   CONFIG_PACKAGE_tr181-routeradvertisement=y
+  CONFIG_PACKAGE_tr181-schedules=y
   CONFIG_PACKAGE_tr181-security=y
   CONFIG_PACKAGE_tr181-sfp=y
   CONFIG_PACKAGE_tr181-syslog=y
@@ -839,6 +854,7 @@ Assure expected build configuration (PCF-1413):
   CONFIG_PKG_CC_STACKPROTECTOR_STRONG=y
   # CONFIG_PKG_FORTIFY_SOURCE_1 is not set
   CONFIG_PKG_FORTIFY_SOURCE_2=y
+  CONFIG_PLUGIN_USP_PASSWORD_LENGTH=32
   CONFIG_PON_SDK_VERSION="2.1.0"
   CONFIG_PRPLMESH_DM_MAPPER_START_ORDER=99
   CONFIG_PRPLMESH_DM_MAPPER_STOP_ORDER=0
@@ -1049,8 +1065,13 @@ Assure expected build configuration (PCF-1413):
   CONFIG_SAH_AMX_TR181_ROUTING_RUN_AS_USER="tr181_app"
   CONFIG_SAH_AMX_TR181_ROUTING_START_ORDER=30
   CONFIG_SAH_AMX_TR181_ROUTING_STOP_ORDER=10
+  CONFIG_SAH_AMX_TR181_SCHEDULES=y
+  CONFIG_SAH_AMX_TR181_SCHEDULES_RUN_AS_GROUP="tr181_app"
+  CONFIG_SAH_AMX_TR181_SCHEDULES_RUN_AS_USER="tr181_app"
+  CONFIG_SAH_AMX_TR181_SCHEDULES_START_ORDER=20
+  CONFIG_SAH_AMX_TR181_SCHEDULES_STOP_ORDER=80
   CONFIG_SAH_AMX_TR181_SECURITY=y
-  CONFIG_SAH_AMX_TR181_SECURITY_ORDER=61
+  CONFIG_SAH_AMX_TR181_SECURITY_ORDER=21
   CONFIG_SAH_AMX_TR181_SFP=y
   CONFIG_SAH_AMX_TR181_SFP_ORDER=30
   CONFIG_SAH_AMX_TR181_SYSLOG=y
@@ -1115,6 +1136,7 @@ Assure expected build configuration (PCF-1413):
   CONFIG_SAH_MOD_SAHTRACE_DEFAULT_LOG_LEVEL=200
   CONFIG_SAH_MOD_SAHTRACE_DEFAULT_TRACE_ZONE_LEVEL=200
   CONFIG_SAH_ODLGEN=y
+  CONFIG_SAH_PLUGIN_CTHULHU_USP=y
   CONFIG_SAH_REBOOT_SERVICE=y
   CONFIG_SAH_REBOOT_SERVICE_RUN_AS_GROUP="tr181_app"
   CONFIG_SAH_REBOOT_SERVICE_RUN_AS_USER="tr181_app"

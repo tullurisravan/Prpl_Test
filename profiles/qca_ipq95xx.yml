@@ -8,12 +8,13 @@ description: Build image for prpl Foundation Freedom board
 feeds:
   - name: feed_qca
     uri: https://gitlab.com/prpl-foundation/prplOS/feed-qca.git
-    revision: latest-24.10/ath13.1@6e01e6d7f0f62723b0fe001d6c3f64fe5286b0a6
+    revision: latest-24.10/ath13.1@2be4d2f7f45de4332ed4d484c8277472266ae52a
 
 packages:
   - ipq95xx
   - wireless-regdb
   - hostapd-qca-utils
+  - wpa-qca-cli
   - ath12k-caldata
   - aq-fw-download
   - aq_phy

@@ -77,6 +77,7 @@ Assure expected build configuration (PCF-1413):
   CONFIG_MOSQUITTO_DYNAMIC_SECURITY=y
   CONFIG_MOSQUITTO_LWS=y
   CONFIG_MOSQUITTO_PASSWD=y
+  CONFIG_OBUSPA_WEBSOCKET_MTP_SUPPORT=y
   CONFIG_ODHCP6C_ENABLE_UBUS=y
   CONFIG_PACKAGE_ATH_DEBUG=y
   CONFIG_PACKAGE_MAC80211_SFE_SUPPORT=y
@@ -145,6 +146,7 @@ Assure expected build configuration (PCF-1413):
   CONFIG_PACKAGE_gmap-server=y
   CONFIG_PACKAGE_hostapd-qca-utils=y
   CONFIG_PACKAGE_hosts-manager=y
+  CONFIG_PACKAGE_image-authentication=y
   CONFIG_PACKAGE_ip-bridge=y
   CONFIG_PACKAGE_ip-full=y
   CONFIG_PACKAGE_ip-manager=y
@@ -217,8 +219,12 @@ Assure expected build configuration (PCF-1413):
   CONFIG_PACKAGE_kmod-pptp=y
   CONFIG_PACKAGE_kmod-qca-mdio=y
   CONFIG_PACKAGE_kmod-qca-nss-ecm-premium=y
+  CONFIG_PACKAGE_kmod-qca-nss-eip=y
+  CONFIG_PACKAGE_kmod-qca-nss-eip-ipsec=y
   CONFIG_PACKAGE_kmod-qca-nss-flowmgr=y
   CONFIG_PACKAGE_kmod-qca-nss-fls=y
+  CONFIG_PACKAGE_kmod-qca-nss-netfn-pkt-steer=y
+  CONFIG_PACKAGE_kmod-qca-nss-netfn-sk-offload=y
   CONFIG_PACKAGE_kmod-qca-nss-netfn-tcpst=y
   CONFIG_PACKAGE_kmod-qca-nss-nsm=y
   CONFIG_PACKAGE_kmod-qca-nss-ppe-ath-clients=y
@@ -267,6 +273,7 @@ Assure expected build configuration (PCF-1413):
   CONFIG_PACKAGE_libarchive=y
   CONFIG_PACKAGE_libatomic=y
   CONFIG_PACKAGE_libattr=y
+  CONFIG_PACKAGE_libbotan=y
   CONFIG_PACKAGE_libbpf=y
   CONFIG_PACKAGE_libbsd=y
   CONFIG_PACKAGE_libbz2=y
@@ -324,6 +331,7 @@ Assure expected build configuration (PCF-1413):
   CONFIG_PACKAGE_libopensc=y
   CONFIG_PACKAGE_libp11=y
   CONFIG_PACKAGE_libpacket-interception=y
+  CONFIG_PACKAGE_libpass=y
   CONFIG_PACKAGE_libpci=y
   CONFIG_PACKAGE_libpcp=y
   CONFIG_PACKAGE_libpcre2=y
@@ -335,8 +343,10 @@ Assure expected build configuration (PCF-1413):
   CONFIG_PACKAGE_libqosnode=y
   CONFIG_PACKAGE_libqrtr-glib=y
   CONFIG_PACKAGE_librlyeh=y
+  CONFIG_PACKAGE_librnp=y
   CONFIG_PACKAGE_libsahtrace=y
   CONFIG_PACKAGE_libseccomp=y
+  CONFIG_PACKAGE_libsexpp=y
   CONFIG_PACKAGE_libsqlite3=y
   CONFIG_PACKAGE_libstdcpp=y
   CONFIG_PACKAGE_libswla=y
@@ -430,11 +440,11 @@ Assure expected build configuration (PCF-1413):
   CONFIG_PACKAGE_mod-ra-radvd=y
   CONFIG_PACKAGE_mod-routing-dhcp=y
   CONFIG_PACKAGE_mod-sahtrace=y
+  CONFIG_PACKAGE_mod-scheduler-amxp=y
   CONFIG_PACKAGE_mod-usp-registration=y
   CONFIG_PACKAGE_mod-vlan-ioctl=y
   CONFIG_PACKAGE_mod-vlan-uci=y
   CONFIG_PACKAGE_mod-wanmgr-sfp=y
-  CONFIG_PACKAGE_mod-wanmgr-system=y
   CONFIG_PACKAGE_mod-xpon-prpl=y
   CONFIG_PACKAGE_mod-xpon-prpl-mock=m
   CONFIG_PACKAGE_modemmanager=y
@@ -548,6 +558,7 @@ Assure expected build configuration (PCF-1413):
   CONFIG_PACKAGE_timingila=y
   CONFIG_PACKAGE_timingila-cthulhu=y
   CONFIG_PACKAGE_timingila-rlyeh=y
+  CONFIG_PACKAGE_timingila-rlyeh-security=y
   CONFIG_PACKAGE_tr069-manager=y
   CONFIG_PACKAGE_tr181-bridging=y
   CONFIG_PACKAGE_tr181-bulkdata=y
@@ -582,6 +593,7 @@ Assure expected build configuration (PCF-1413):
   CONFIG_PACKAGE_tr181-qos=y
   CONFIG_PACKAGE_tr181-rest-api=y
   CONFIG_PACKAGE_tr181-routeradvertisement=y
+  CONFIG_PACKAGE_tr181-schedules=y
   CONFIG_PACKAGE_tr181-security=y
   CONFIG_PACKAGE_tr181-sfp=y
   CONFIG_PACKAGE_tr181-syslog=y
@@ -604,6 +616,7 @@ Assure expected build configuration (PCF-1413):
   CONFIG_PACKAGE_wifi-sensing=y
   # CONFIG_PACKAGE_wififw_mount_script is not set
   CONFIG_PACKAGE_wireless-freedom=y
+  CONFIG_PACKAGE_wpa-qca-cli=y
   CONFIG_PACKAGE_wwan=y
   CONFIG_PACKAGE_xtables-legacy=y
   CONFIG_PACKAGE_yajl=y
@@ -614,6 +627,7 @@ Assure expected build configuration (PCF-1413):
   CONFIG_PKG_CC_STACKPROTECTOR_STRONG=y
   # CONFIG_PKG_FORTIFY_SOURCE_1 is not set
   CONFIG_PKG_FORTIFY_SOURCE_2=y
+  CONFIG_PLUGIN_USP_PASSWORD_LENGTH=32
   CONFIG_PRPLMESH_DM_MAPPER_START_ORDER=99
   CONFIG_PRPLMESH_DM_MAPPER_STOP_ORDER=0
   CONFIG_PRPLMESH_ENABLE_UNIT_TESTS=y
@@ -823,8 +837,13 @@ Assure expected build configuration (PCF-1413):
   CONFIG_SAH_AMX_TR181_ROUTING_RUN_AS_USER="tr181_app"
   CONFIG_SAH_AMX_TR181_ROUTING_START_ORDER=30
   CONFIG_SAH_AMX_TR181_ROUTING_STOP_ORDER=10
+  CONFIG_SAH_AMX_TR181_SCHEDULES=y
+  CONFIG_SAH_AMX_TR181_SCHEDULES_RUN_AS_GROUP="tr181_app"
+  CONFIG_SAH_AMX_TR181_SCHEDULES_RUN_AS_USER="tr181_app"
+  CONFIG_SAH_AMX_TR181_SCHEDULES_START_ORDER=20
+  CONFIG_SAH_AMX_TR181_SCHEDULES_STOP_ORDER=80
   CONFIG_SAH_AMX_TR181_SECURITY=y
-  CONFIG_SAH_AMX_TR181_SECURITY_ORDER=61
+  CONFIG_SAH_AMX_TR181_SECURITY_ORDER=21
   CONFIG_SAH_AMX_TR181_SFP=y
   CONFIG_SAH_AMX_TR181_SFP_ORDER=30
   CONFIG_SAH_AMX_TR181_SYSLOG=y
@@ -889,6 +908,7 @@ Assure expected build configuration (PCF-1413):
   CONFIG_SAH_MOD_SAHTRACE_DEFAULT_LOG_LEVEL=200
   CONFIG_SAH_MOD_SAHTRACE_DEFAULT_TRACE_ZONE_LEVEL=200
   CONFIG_SAH_ODLGEN=y
+  CONFIG_SAH_PLUGIN_CTHULHU_USP=y
   CONFIG_SAH_REBOOT_SERVICE=y
   CONFIG_SAH_REBOOT_SERVICE_RUN_AS_GROUP="tr181_app"
   CONFIG_SAH_REBOOT_SERVICE_RUN_AS_USER="tr181_app"
