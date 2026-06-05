@@ -1,5 +1,5 @@
 # Test for FEAT-376 - Allow/block SFPs
-# 
+#
 # Short description
 # - Check HGW has copper SFP which is allowed.
 # - Instruct HGW to block all SFPs.
@@ -58,7 +58,7 @@ Check if we're on the right board
   SFPs.SFPCage.1.SFF8024Identifier=3
   SFPs.SFPCage.1.SFPPresent=1
   SFPs.SFPCage.1.SFPReference="Device.SFPs.Mgmt.SFF8472.1"
-  SFPs.SFPCage.1.SFPType="Electrical Ethernet"
+  SFPs.SFPCage.1.SFPType="Optical Ethernet"
 
   $ R ba-cli 'Ethernet.Interface.1.Name?' | grep -Ev '^>|^$'
   Ethernet.Interface.1.Name="eth1"
@@ -108,7 +108,7 @@ Simulate that SFP is replugged
   SFPs.SFPCage.1.SFF8024Identifier=3
   SFPs.SFPCage.1.SFPPresent=1
   SFPs.SFPCage.1.SFPReference="Device.SFPs.Mgmt.SFF8472.1"
-  SFPs.SFPCage.1.SFPType="Electrical Ethernet"
+  SFPs.SFPCage.1.SFPType="Optical Ethernet"
 
   $ R ba-cli 'Ethernet.Interface.1.Status?' | grep -Ev '^>|^$'
   Ethernet.Interface.1.Status="NotAllowed"
@@ -137,7 +137,7 @@ Simulate that SFP is replugged
   SFPs.SFPCage.1.SFF8024Identifier=3
   SFPs.SFPCage.1.SFPPresent=1
   SFPs.SFPCage.1.SFPReference="Device.SFPs.Mgmt.SFF8472.1"
-  SFPs.SFPCage.1.SFPType="Electrical Ethernet"
+  SFPs.SFPCage.1.SFPType="Optical Ethernet"
 
 Check that Ethernet.Interface.1.Status is different from NotAllowed
 
