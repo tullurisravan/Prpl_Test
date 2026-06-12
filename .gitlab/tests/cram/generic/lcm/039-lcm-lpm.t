@@ -269,5 +269,4 @@ wait for cthulhu to terminate all containers and itself, before clear its data
   [
       ""
   ]
-  
   $ R logger -t cram Ended 039-lcm-lpm
