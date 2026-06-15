@@ -1,0 +1,32 @@
+.blackduck scan config:
+  extends: .build test config
+  stage: blackduck
+  timeout: 4 hours
+  needs: []
+  rules:
+    - if: $CI_COMMIT_REF_PROTECTED && $CI_COMMIT_TAG
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_LABELS =~ /ci::allow-expensive-jobs/'
+  before_script:
+    - touch .build_failed
+    - export CI_BUILD_PROFILE="$(echo $CI_JOB_NAME | sed 's/blackduck scan \(.*\)/\1/')"
+  script:
+    - !reference [.build test config, script]
+    - target_name=$(sed -n 's/.*CONFIG_TARGET_BOARD="\([^"]\+\)".*/\1/p' .config)
+    - sudo apt update
+    - sudo apt install openjdk-17-jdk -y
+    - curl -s --output detect.sh https://detect.blackduck.com/detect10.sh
+    - sudo chmod +x detect.sh
+    - |
+      for dir in $(ls -d build_dir/target-*/*); do
+        ./detect.sh \
+            --blackduck.url=https://prplfoundation.app.blackduck.com \
+            --blackduck.api.token=$BLACKDUCK_API_KEY \
+            --detect.project.name=prplware-v4 \
+            --detect.project.version.name=prplware-v4.0.3-$target_name \
+            --detect.source.path=$dir \
+            --detect.excluded.detector.types=PIP,NPM 2>&1 | tee logs/blackduck.log
+      done
+  after_script:
+    - mkdir -p bin
+    - tar -czf bin/blackduck-scan-output.tar.gz /home/builder/blackduck/runs/*/scan/BlackDuckScanOutput/* 2>/dev/null || true
