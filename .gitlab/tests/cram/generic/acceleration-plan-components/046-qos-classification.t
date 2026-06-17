@@ -42,6 +42,12 @@ Check that the created firewall rule and routing policy are deleted in the LL AP
 Check that changing X_PRPLWARE-COM_OutputInterface updates the mangle table rule without restarting tr181-qos:
   $ R "ba-cli 'QoS.Classification.lansubnet1.Enable = true'" > /dev/null
 
+Resolve interface names from logical references:
+  $ WAN_LOWER=$(R "ba-cli 'Logical.Interface.1.LowerLayers?'" | grep -o 'LowerLayers="[^"]*"' | cut -d'"' -f2)
+  $ WAN_IFACE=$(R "ba-cli '${WAN_LOWER}Name?'" | grep -o 'Name="[^"]*"' | cut -d'"' -f2)
+  $ LAN_LOWER=$(R "ba-cli 'Logical.Interface.2.LowerLayers?'" | grep -o 'LowerLayers="[^"]*"' | cut -d'"' -f2)
+  $ LAN_IFACE=$(R "ba-cli '${LAN_LOWER}Name?'" | grep -o 'Name="[^"]*"' | cut -d'"' -f2)
+
 Check initial rule has no output interface filter:
   $ R "iptables -t mangle -nvL FORWARD_class | awk '/MARK/ {print \$6,\$7}'"
   * *
@@ -50,16 +56,15 @@ Set X_PRPLWARE-COM_OutputInterface to Logical.Interface.1 (resolves to wan):
   $ R "ubus-cli 'QoS.Classification.lansubnet1.X_PRPLWARE-COM_OutputInterface=Logical.Interface.1.'" > /dev/null
 
 Check the rule now filters on output interface wan without tr181-qos restart:
-  $ R "iptables -t mangle -nvL FORWARD_class | awk '/MARK/ {print \$6,\$7}'"
-  * wan
+  $ RESULT=$(R "iptables -t mangle -nvL FORWARD_class | awk '/MARK/ {print \$6,\$7}'"); [ "$RESULT" = "* $WAN_IFACE" ] && echo "OK" || echo "FAIL: got '$RESULT', expected '* $WAN_IFACE'"
+  OK
 
 Change X_PRPLWARE-COM_OutputInterface to Logical.Interface.2 (resolves to br-lan):
   $ R "ubus-cli 'QoS.Classification.lansubnet1.X_PRPLWARE-COM_OutputInterface=Logical.Interface.2.'" > /dev/null
 
 Check the rule reflects the new output interface (br-lan) without tr181-qos restart:
-  $ R "iptables -t mangle -nvL FORWARD_class | awk '/MARK/ {print \$6,\$7}'"
-  * br-lan
-
+  $ RESULT=$(R "iptables -t mangle -nvL FORWARD_class | awk '/MARK/ {print \$6,\$7}'"); [ "$RESULT" = "* $LAN_IFACE" ] && echo "OK" || echo "FAIL: got '$RESULT', expected '* $LAN_IFACE'"
+  OK
 Restore original configuration:
   $ R "ba-cli 'QoS.Classification.lansubnet1.X_PRPLWARE-COM_OutputInterface = \"\"'" > /dev/null
   $ R "ba-cli 'QoS.Classification.lansubnet1.Enable = false'" > /dev/null
