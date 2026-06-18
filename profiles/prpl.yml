@@ -33,6 +33,8 @@ packages:
   - ip6tables-zz-legacy
   - iptables-mod-ipopt
   - iptables-zz-legacy
+  - libcap-bin
+  - libcap-ng-bin
   - libdhcpoptions
   - libfwinterface
   - libfwrules
