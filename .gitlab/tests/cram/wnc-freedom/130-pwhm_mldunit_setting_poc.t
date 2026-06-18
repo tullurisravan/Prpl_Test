@@ -183,6 +183,6 @@ Check 11be configuration : 11BE enabled for Radio, mld_ap enabled for interface
   $ get_hapd_config $itf disable_11be
   0
 
-Restore default MLDUnitSetting : 'Required'
+Restore default MLDUnitSetting : 'Required' (TODO : no longer default value)
   $ R "ba-cli -l -a \"protected; WiFi.Radio.2.IEEE80211be.MLDUnitSetting='Required'\" | grep Required"
   Required
