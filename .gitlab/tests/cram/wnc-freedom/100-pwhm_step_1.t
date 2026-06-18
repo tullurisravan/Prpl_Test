@@ -3,6 +3,11 @@ Create R alias:
   $ alias R="${CRAM_REMOTE_COMMAND:-}"
   $ . "${TESTDIR}/../scripts/wifi.sh"
 
+
+Set MLDUnitSetting='Required' for all radios
+  $ R "ba-cli -l -a \"protected; WiFi.Radio.*.IEEE80211be.MLDUnitSetting='Required'\" | grep Required | wc -l"
+  3
+
   $ R "logger -t cram 'Starting PWHM test (step 1) ...'"
 
 Wait for Device.WiFi. datamodel availability:
