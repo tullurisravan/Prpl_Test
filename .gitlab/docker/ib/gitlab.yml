@@ -6,7 +6,7 @@ build Docker image ib-mvebu-cortexa9:
     DOCKER_BUILD_EXTRA_ARGS: --build-arg DESIGNATED_BRANCH_SLUG=$CI_DESIGNATED_BRANCH_SLUG
   extends: .build Docker image
   before_script:
-    - tar xf bin/targets/mvebu/cortexa9/prplos-imagebuilder-mvebu-cortexa9.Linux-x86_64.tar.xz --strip=1 -C .gitlab/docker/ib
+    - tar xf bin/targets/mvebu/cortexa9/prplos-imagebuilder-mvebu-cortexa9.Linux-x86_64.tar.zst --strip=1 -C .gitlab/docker/ib
 
 test Docker image ib-mvebu-cortexa9:
   extends: .test Docker IB image
@@ -29,7 +29,7 @@ build Docker image ib-x86-64:
     DOCKER_BUILD_EXTRA_ARGS: --build-arg DESIGNATED_BRANCH_SLUG=$CI_DESIGNATED_BRANCH_SLUG
   extends: .build Docker image
   before_script:
-    - tar xf bin/targets/x86/64/prplos-imagebuilder-x86-64.Linux-x86_64.tar.xz --strip=1 -C .gitlab/docker/ib
+    - tar xf bin/targets/x86/64/prplos-imagebuilder-x86-64.Linux-x86_64.tar.zst --strip=1 -C .gitlab/docker/ib
 
 test Docker image ib-x86-64:
   stage: docker SDK and IB test
@@ -44,6 +44,30 @@ deploy Docker image ib-x86-64:
   needs: ["test Docker image ib-x86-64"]
 
 
+build Docker image ib-armsr-armv8:
+  stage: docker SDK and IB
+  needs: ["build test armsr prpl security"]
+  variables:
+    DOCKER_DOCKERFILE_PATH: .gitlab/docker/ib
+    DOCKER_BUILD_EXTRA_ARGS: --build-arg DESIGNATED_BRANCH_SLUG=$CI_DESIGNATED_BRANCH_SLUG
+  extends: .build Docker image
+  before_script:
+    - tar xf bin/targets/armsr/armv8/prplos-imagebuilder-armsr-armv8.Linux-x86_64.tar.zst --strip=1 -C .gitlab/docker/ib
+
+test Docker image ib-armsr-armv8:
+  stage: docker SDK and IB test
+  extends: .test Docker IB image
+  needs: ["build Docker image ib-armsr-armv8"]
+  variables:
+    CI_IB_PROFILE: generic
+    CI_IB_PACKAGES: -logd -firewall4 -nftables
+
+deploy Docker image ib-armsr-armv8:
+  stage: docker SDK and IB deploy
+  extends: .deploy Docker image
+  needs: ["test Docker image ib-armsr-armv8"]
+
+
 build Docker image ib-qualcommax-ipq807x:
   stage: docker SDK and IB
   needs: ["build test ipq807x prpl security"]
@@ -52,7 +76,7 @@ build Docker image ib-qualcommax-ipq807x:
     DOCKER_BUILD_EXTRA_ARGS: --build-arg DESIGNATED_BRANCH_SLUG=$CI_DESIGNATED_BRANCH_SLUG
   extends: .build Docker image
   before_script:
-    - tar xf bin/targets/qualcommax/ipq807x/prplos-imagebuilder-qualcommax-ipq807x.Linux-x86_64.tar.xz --strip=1 -C .gitlab/docker/ib
+    - tar xf bin/targets/qualcommax/ipq807x/prplos-imagebuilder-qualcommax-ipq807x.Linux-x86_64.tar.zst --strip=1 -C .gitlab/docker/ib
 
 test Docker image ib-qualcommax-ipq807x:
   extends: .test Docker IB image
