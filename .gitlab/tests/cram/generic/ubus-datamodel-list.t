@@ -92,6 +92,7 @@ Check that ubus has expected datamodels available:
   Device.DynamicDNS
   Device.Ethernet
   Device.Firewall
+  Device.GRE
   Device.Hardware
   Device.Hardware.CPUs
   Device.Hardware.X_PRPLWARE-COM_FlashDevice
@@ -99,9 +100,12 @@ Check that ubus has expected datamodels available:
   Device.Hosts
   Device.IP
   Device.IP.Diagnostics
+  Device.IPsec
   Device.InterfaceStack
   Device.LEDs
   Device.Logical
+  Device.Logical.TAP
+  Device.Logical.TUN
   Device.MQTT
   Device.MQTT.Broker
   Device.ManagementServer
@@ -131,6 +135,7 @@ Check that ubus has expected datamodels available:
   Device.UserInterface
   Device.Users
   Device.WiFi
+  Device.WireGuard
   Device.XPON
   Device.X_PRPLWARE-COM_Buttons
   Device.X_PRPLWARE-COM_ConMon
@@ -188,6 +193,9 @@ Check that ubus has expected datamodels available:
   Firewall.X_PRPLWARE-COM_InterfaceSetting
   Firewall.X_PRPLWARE-COM_WANAccess
   Firewall.X_PRPLWARE-COM_WANAccess.BlockList
+  GRE
+  GRE.Filter
+  GRE.Tunnel
   GenericNetworkInterface
   GenericNetworkInterface.Interface
   Hardware
@@ -228,6 +236,14 @@ Check that ubus has expected datamodels available:
   IPDiagnostics.X_PRPLWARE-COM_UploadResult.IncrementalResult
   IPDiagnostics.X_PRPLWARE-COM_UploadResult.PerConnectionResult
   IPDiagnostics.X_PRPLWARE-COM_UploadResult.Process
+  IPsec
+  IPsec.Filter
+  IPsec.IKEv2SA
+  IPsec.Interface
+  IPsec.Profile
+  IPsec.Secret
+  IPsec.Stats
+  IPsec.Tunnel
   KernelFaults
   KernelFaults.KernelFault
   LEDs
@@ -378,6 +394,10 @@ Check that ubus has expected datamodels available:
   Syslog.Source
   Syslog.Template
   System
+  TAP
+  TAP.Interface
+  TUN
+  TUN.Interface
   TemperatureStatus
   TemperatureStatus.TemperatureSensor
   Time
@@ -446,6 +466,9 @@ Check that ubus has expected datamodels available:
   WiFiScheduler.Group.Schedule
   WiFiScheduler.Network
   WiFiScheduler.Network.Schedule
+  WireGuard
+  WireGuard.Peer
+  WireGuard.Tunnel
   XPON
   XPON.ONU
   X_PRPLWARE-COM_Agent

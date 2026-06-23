@@ -15,7 +15,7 @@ provided, #Param1 - Name of the process or service:
 
 Ensure that all services migrated to procd are no longer using the obsolete amx_init_functions.sh-based init system, with the exception of non-migrated prplware components except Amx Shutdown:
 
-  $ R "grep -r amx_init_functions.sh /etc/init.d" | grep -vE 'amx-shutdown-wait'
+  $ R "grep -r amx_init_functions.sh /etc/init.d" | grep -vE 'amx-shutdown-wait|tr181-ipsec'
   [1]
 
 Verify expected processes that should be started by procd are running, using \
