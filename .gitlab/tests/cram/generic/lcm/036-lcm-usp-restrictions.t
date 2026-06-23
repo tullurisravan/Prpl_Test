@@ -52,6 +52,8 @@ Update the RegisterTrustPaths parameter for service and check that untrusted ser
   $ R "${S} && update_ctr --url ${PROVIDER_SERVICE_URL} --ee --uuid --privileged true --usprequired \"Full Access\" --uspregisterpaths \"Device.TrustedProvider1.\" --uspautomountipc \"USP_UDS_Authenticated\"" > /dev/null
   $ R "usp-cli -lj 'Device.USPServices.Trust.[EndpointID==\"${CTR_ENDPOINTID}\"].?' | sed '/^$/d'"
   [{"Device.USPServices.Trust.*.":{"TargetPaths":"Device.TrustedProvider1.","EndpointID":"*"}}] (glob)
+## Wait for TrustedProvider service to finish data model registration
+  $ sleep 5
   $ R "usp-cli 'gsdm Device.' | grep TrustedProvider | sed '/^$/d'"
   ... (Object      ) Device.TrustedProvider1.
 
@@ -60,6 +62,8 @@ Update the RegisterTrustPaths parameter with several paths and check that untrus
   $ R "${S} && update_ctr --url ${PROVIDER_SERVICE_URL} --ee --uuid --privileged true --usprequired \"Full Access\" --uspregisterpaths \"Device.TrustedProvider1.,Device.TrustedProvider2.\" --uspautomountipc \"USP_UDS_Authenticated\"" > /dev/null
   $ R "usp-cli -lj 'Device.USPServices.Trust.[EndpointID==\"${CTR_ENDPOINTID}\"].?' | sed '/^$/d'"
   [{"Device.USPServices.Trust.*.":{"TargetPaths":"Device.TrustedProvider1.,Device.TrustedProvider2.","EndpointID":"*"}}] (glob)
+## Wait for TrustedProvider service to finish data model registration
+  $ sleep 5
   $ R "usp-cli 'gsdm Device.' | grep TrustedProvider | sed '/^$/d'"
   ... (Object      ) Device.TrustedProvider1.
   ... (Object      ) Device.TrustedProvider2.
