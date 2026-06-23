@@ -402,6 +402,9 @@ sub gen_package_mk() {
 		my %deplines = ('' => {});
 
 		foreach my $pkg (@{$src->{packages}}) {
+			next if $pkg->{buildonly};
+			my $pkg_config = sprintf 'CONFIG_PACKAGE_%s', $pkg->{name};
+
 			foreach my $dep (@{$pkg->{depends}}) {
 				next if ($dep =~ /@/);
 
@@ -428,7 +431,29 @@ sub gen_package_mk() {
 					if (@vdeps > 1) {
 						$depstr = sprintf '$(if $(CONFIG_PACKAGE_%s),%s)', $vdep->{name}, $depstr;
 					}
-					my $depline = get_conditional_dep($condition, $depstr);
+					# Only guard behind CONFIG_PACKAGE_<pkg> if the dep
+					# target itself has a selectable config symbol, i.e. it
+					# is a regular package and not a build-only dependency.
+					# Build-only packages (PKG_BUILD_DEPENDS) have no
+					# CONFIG_PACKAGE_ symbol in .config and must always be
+					# emitted unconditionally, otherwise their own
+					# prerequisites will never be resolved and the build
+					# fails (e.g. pcsc-lite/libpcsclite pulled in by opensc).
+					my $dep_is_buildonly = !grep { !$_->{buildonly} } @{$vpkg_dep};
+
+					my $guarded_condition;
+					if (!$dep_is_buildonly) {
+						if ($condition) {
+							$guarded_condition = "\$($pkg_config) && $condition";
+						} else {
+							$guarded_condition = "\$($pkg_config)";
+						}
+					} else {
+						# Build-only dep: preserve original condition only,
+						# no per-package guard.
+						$guarded_condition = $condition;
+					}
+					my $depline = get_conditional_dep($guarded_condition, $depstr);
 					if ($depline) {
 						$deplines{''}{$depline}++;
 					}
