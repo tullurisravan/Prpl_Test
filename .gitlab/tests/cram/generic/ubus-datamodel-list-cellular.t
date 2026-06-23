@@ -2,12 +2,12 @@ Create R alias:
 
   $ alias R="${CRAM_REMOTE_COMMAND:-}"
 
-If test is running on a Mozart, Turris, OSPv1 or Haze, lets skip the test as there is no Cellular support:
-  $ if echo "$CI_JOB_NAME" | grep -q -E "(Mozart|Turris|Haze|HDK-3)"; then exit 80; fi
+If test is running on a Valyrian, Mozart, Turris, OSPv1 or Haze, lets skip the test as there is no Cellular support:
+  $ if echo "$CI_JOB_NAME" | grep -q -E "(Valyrian|Mozart|Turris|Haze|HDK-3)"; then exit 80; fi
 
 Check that ubus has expected Cellular datamodels available:
 
-  $ R "ubus list | grep -e '^Cellular' -e 'Device.Cellular' |  grep -v -e '\.[[:digit:]]'"
+  $ R "ubus list | grep -e '^Cellular' -e 'Device.Cellular' -e 'Device.SessionManagement' -e 'Device.TrustedElements' -e '^SessionManagement' -e '^TrustedElements' |  grep -v -e '\.[[:digit:]]'"
   Cellular
   Cellular.AccessPoint
   Cellular.Interface
@@ -16,3 +16,20 @@ Check that ubus has expected Cellular datamodels available:
   Cellular.Interface.SMS.Outgoing
   Cellular.Interface.SMS.Storage
   Device.Cellular
+  Device.SessionManagement
+  Device.TrustedElements
+  SessionManagement
+  SessionManagement.PDN
+  SessionManagement.PDP
+  SessionManagement.PDU
+  SessionManagement.PDU.NetworkSlice
+  SessionManagement.PDU.QoSFlow
+  SessionManagement.PDU.QoSRule
+  SessionManagement.PDU.QoSRule.Filter
+  SessionManagement.Session
+  SessionManagement.Session.IPv4Address
+  SessionManagement.Session.IPv6Address
+  SessionManagement.Session.PCO
+  TrustedElements
+  TrustedElements.SIM
+  TrustedElements.SIM.Profile
