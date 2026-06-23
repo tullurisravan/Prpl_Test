@@ -65,8 +65,8 @@ Save the data model after simulated firmware upgrade:
 Compare the data models before and after the firmware upgrade:
 
   $ diff /tmp/lcm-pcm/rlyeh_before.dm /tmp/lcm-pcm/rlyeh_after.dm
-  $ sed -i -e "s/\(Sandbox\.Instances\)\.2/\1\.1/g" /tmp/lcm-pcm/cthulhu_after.dm
-  $ sed -i -e "s/\(Sandbox\.Instances\)\.3/\1\.2/g" /tmp/lcm-pcm/cthulhu_after.dm
+  $ sed -i -e "s/\(Sandbox\.Instances\)\.[[:digit:]]/\1\.{i}/g" /tmp/lcm-pcm/cthulhu_before.dm
+  $ sed -i -e "s/\(Sandbox\.Instances\)\.[[:digit:]]/\1\.{i}/g" /tmp/lcm-pcm/cthulhu_after.dm
   $ cp ${TESTDIR}/lcm-pcm_runtime_params /tmp/lcm-pcm/runtime_params
   $ cthulhu_diff_params=$(diff -n /tmp/lcm-pcm/cthulhu_before.dm /tmp/lcm-pcm/cthulhu_after.dm | grep -o '^Cthulhu[^=]\+')
   $ for param in ${cthulhu_diff_params}; do grep -Fxq "${param}" /tmp/lcm-pcm/runtime_params || echo "ERROR: runtime parameter mismatch - ${param}"; done
