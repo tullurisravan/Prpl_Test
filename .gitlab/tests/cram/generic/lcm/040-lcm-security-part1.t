@@ -88,7 +88,7 @@ Test that a custom User-Agent header value is sent in HTTP requests to the signa
 Test container installation with Basic authentication using a wrong password - expect authentication failure:
 
   $ R "${S} && listen_dustatechange"
-  $ R "${S} && install_basic_container_no_wait --signature_user --signature_pwd wrongpass --signature https://signature.server1.local.com:6443/signature" > /dev/null
+  $ R "${S} && install_basic_container_no_wait --signature_user --signature_pwd wrongpass --signature https://signature.server1.local.com:6443/signature" > /dev/null 2>&1
   $ R "${S} && filtered_event"
   FaultCode = 7036
   FaultString = "Signature check for [*] failed [Authentication failed: * URL [*]]" (glob)
@@ -109,7 +109,7 @@ Test container installation with Basic authentication using a correct password -
 Test container installation with Token/Bearer authentication using a wrong password - expect authentication failure:
 
   $ R "${S} && listen_dustatechange"
-  $ R "${S} && install_basic_container_no_wait --signature_user --signature_pwd wrongpass --signature https://signature.server1.local.com:7443/signature" > /dev/null
+  $ R "${S} && install_basic_container_no_wait --signature_user --signature_pwd wrongpass --signature https://signature.server1.local.com:7443/signature" > /dev/null 2>&1
   $ R "${S} && filtered_event"
   FaultCode = 7036
   FaultString = "Signature check for [*] failed [Authentication failed: * URL [*]]" (glob)

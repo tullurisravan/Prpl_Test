@@ -52,7 +52,7 @@ Test container installation fails when the registry is configured with a wrong C
   $ R "${S} && configure_datamodel docker_repo_root_ca1"
   [{"Device.SoftwareModules.Config.Repository.*.":{"CABundle":"Device.Security.CABundle.*"}}] (glob)
   $ R "${S} && listen_dustatechange"
-  $ R "${S} && install_basic_container_no_wait" > /dev/null
+  $ R "${S} && install_basic_container_no_wait" > /dev/null 2>&1
   $ R "${S} && filtered_event"
   FaultCode = 7002
   FaultString = "Pull image [*] failed [*]" (glob)
@@ -75,7 +75,7 @@ Test container installation succeeds when the registry is configured with the co
 Test container installation fails when the signature server is configured with a wrong CA bundle:
 
   $ R "${S} && listen_dustatechange"
-  $ R "${S} && install_basic_container_no_wait --signature https://signature.server2.local.com:9443/signature" > /dev/null
+  $ R "${S} && install_basic_container_no_wait --signature https://signature.server2.local.com:9443/signature" > /dev/null 2>&1
   $ R "${S} && filtered_event"
   FaultCode = 7036
   FaultString = "Signature check for [*] failed [Authentication failed: * URL [https://signature.server2.local.com:*/signature*]]" (glob)
@@ -98,7 +98,7 @@ Test container installation fails when connecting to an mTLS signature server wi
   $ R "${S} && configure_datamodel no_client_cert"
   [{"Device.SoftwareModules.Config.Repository.*.":{"Certificate":""}}] (glob)
   $ R "${S} && listen_dustatechange"
-  $ R "${S} && install_basic_container_no_wait --signature https://signature.server1.local.com:8443/signature" > /dev/null
+  $ R "${S} && install_basic_container_no_wait --signature https://signature.server1.local.com:8443/signature" > /dev/null 2>&1
   $ R "${S} && filtered_event"
   FaultCode = 7036
   FaultString = "Signature check for [*] failed [Authentication failed: * URL [https://signature.server1.local.com:*/signature*]]" (glob)
@@ -139,7 +139,7 @@ Test container installation fails when using wrong default CA bundle configurati
   $ R "${S} && configure_datamodel set_default_ca_wrong"
   [{"Device.SoftwareModules.Config.":{"CABundle":"Device.Security.CABundle.*"}}] (glob)
   $ R "${S} && listen_dustatechange"
-  $ R "${S} && install_basic_container_no_wait" > /dev/null
+  $ R "${S} && install_basic_container_no_wait" > /dev/null 2>&1
   $ R "${S} && filtered_event"
   FaultCode = 7002
   FaultString = "Pull image [*] failed [*]" (glob)
