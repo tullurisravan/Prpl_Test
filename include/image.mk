@@ -48,6 +48,7 @@ IMG_PREFIX_VERCODE:=$(if $(CONFIG_VERSION_CODE_FILENAMES),$(call sanitize,$(VERS
 IMG_PREFIX:=$(VERSION_DIST_SANITIZED)-$(IMG_PREFIX_VERNUM)$(IMG_PREFIX_VERCODE)$(IMG_PREFIX_EXTRA)$(BOARD)-$(SUBTARGET)
 IMG_ROOTFS:=$(IMG_PREFIX)-rootfs
 IMG_COMBINED:=$(IMG_PREFIX)-combined
+IMG_SECURE_INITRAMFS:=$(IMG_PREFIX)-secure-initramfs$(shell $(TOPDIR)/scripts/gen-secure-initramfs.sh show-extension $(call get_initramfs_compression,CONFIG_TARGET_SECURE_INITRAMFS_COMPRESSION_))
 ifeq ($(DUMP),)
 IMG_PART_SIGNATURE:=$(shell echo $(SOURCE_DATE_EPOCH)$(LINUX_VERMAGIC) | $(MKHASH) md5 | cut -b1-8)
 IMG_PART_DISKGUID:=$(shell echo $(SOURCE_DATE_EPOCH)$(LINUX_VERMAGIC) | $(MKHASH) md5 | sed -E 's/(.{8})(.{4})(.{4})(.{4})(.{10})../\1-\2-\3-\4-\500/')
@@ -154,6 +155,29 @@ endef
 # pad to 4k, 8k, 16k, 64k, 128k, 256k and add jffs2 end-of-filesystem mark
 define prepare_generic_squashfs
 	$(STAGING_DIR_HOST)/bin/padjffs2 $(1) 4 8 16 64 128 256
+endef
+
+define Image/SecureInitramfs
+	@{ \
+	  set -eu; \
+	  comp="$(call get_initramfs_compression,CONFIG_TARGET_SECURE_INITRAMFS_COMPRESSION_)"; \
+	  out="$(BIN_DIR)/$(IMG_SECURE_INITRAMFS)"; \
+	  initramfs_dir="$(STAGING_DIR_IMAGE)/initramfs"; \
+	  rootfs_dir="$(TARGET_DIR)"; \
+	  echo "[SecureInitramfs] UNSTRIPPED_FOLDER=$(STAGING_DIR_ROOT)"; \
+	  echo "[SecureInitramfs] BINARIES_PATH=$(CONFIG_TARGET_INIT_PATH)"; \
+	  printf '[SecureInitramfs] COMPRESSION => %q\n' "$$$$comp"; \
+	  printf '[SecureInitramfs] OUTPUT      => %q\n' "$$$$out"; \
+	  printf '[SecureInitramfs] INITRAMFS   => %q\n' "$$$$initramfs_dir"; \
+	  printf '[SecureInitramfs] ROOTFS      => %q\n' "$$$$rootfs_dir"; \
+	  PS4='+ [SecureInitramfs] $${0##*/}:$${LINENO}: '; set -x; \
+	  UNSTRIPPED_FOLDER="$(STAGING_DIR_ROOT)" \
+	  BINARIES_PATH="$(CONFIG_TARGET_INIT_PATH)" \
+	  "$(TOPDIR)/scripts/gen-secure-initramfs.sh" build \
+	    "$$$$comp" \
+	    "$$$$out" \
+	    "$$$$initramfs_dir" "$$$$rootfs_dir"; \
+	}
 endef
 
 define Image/BuildKernel/Initramfs
@@ -946,7 +970,7 @@ define BuildImage
   image_prepare:
 
   ifeq ($(IB),)
-    .PHONY: download prepare compile compile-dtb clean image_prepare kernel_prepare install install-images
+    .PHONY: download prepare compile compile-dtb clean image_prepare kernel_prepare install install-images secure-initramfs
     compile:
 		$(call Build/Compile)
 
@@ -965,7 +989,11 @@ define BuildImage
 		mkdir -p $(BIN_DIR) $(KDIR)/tmp
   endif
 
-  kernel_prepare: image_prepare
+  secure-initramfs:
+ifeq ($(CONFIG_TARGET_SECURE_INITRAMFS),y)
+	  $(call Image/SecureInitramfs)
+endif
+  kernel_prepare: secure-initramfs image_prepare
 	$(call Image/Build/targz)
 	$(call Image/Build/cpiogz)
 	$(call Image/BuildKernel)

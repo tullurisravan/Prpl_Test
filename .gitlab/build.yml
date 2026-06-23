@@ -25,7 +25,15 @@
     - set -o pipefail
     - git config --global --add safe.directory '*'
 
-    - sudo apt-get update && sudo apt-get install --yes --no-install-recommends swig coccinelle
+    - |
+      sudo apt-get update && \
+      sudo apt-get install --yes --no-install-recommends \
+        swig \
+        coccinelle \
+        libbsd-dev \
+        libssl-dev \
+        libpython3-dev \
+        lzop
 
     - |
       crlf_check_failed=$(rgrep -U $'\x0D' profiles | cut -d: -f1 | sort -u || true)
@@ -155,3 +163,12 @@
       - logs
       - ./*packages-hash-issues.patch
       - rootfs-debug.tar.xz
+    exclude:
+      - bin/**/prplos-intel_x86-lgm-*-kernel.itb
+      - bin/**/prplos-intel_x86-lgm-*-rootfs.itb
+      - bin/**/prplos-intel_x86-lgm-PRPL_OSP_v2-*_wav700-fullimage.itb
+      - bin/**/prplos-intel_x86-lgm-PRPL_OSP_v2-kernel.bin
+      - bin/**/prplos-intel_x86-lgm-PRPL_OSP_v2-overlay.dtbo
+      - bin/**/prplos-intel_x86-lgm-PRPL_OSP_v2-*_wav700_eth.dtb
+      - bin/**/prplos-intel_x86-lgm-PRPL_OSP_v2-squashfs-fs.rootfs
+      - bin/**/ext4.fs
