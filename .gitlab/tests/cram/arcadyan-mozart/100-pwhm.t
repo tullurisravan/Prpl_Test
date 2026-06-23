@@ -11,32 +11,35 @@ Wait for Device.WiFi. datamodel availability:
 
 Stop prplMesh:
 
-  $ R "/etc/init.d/prplmesh stop > /dev/null 2>&1"
+  $ R "ba-cli -l X_PRPLWARE-COM_ProcessManager.PrplMesh.Enable=0" | tr -d '\n'
+  0 (no-eol)
+
+  $ sleep 2
 
 Set AutoChannelEnable=0 on all WiFi.Radio. interfaces:
 
   $ wifi_dm "Radio.*.AutoChannelEnable=0"
-  WiFi.Radio.1.AutoChannelEnable=0
-  WiFi.Radio.2.AutoChannelEnable=0
-  WiFi.Radio.3.AutoChannelEnable=0
+  Device.WiFi.Radio.1.AutoChannelEnable=0
+  Device.WiFi.Radio.2.AutoChannelEnable=0
+  Device.WiFi.Radio.3.AutoChannelEnable=0
 
 Set channel to a non DFS one:
 
   $ wifi_dm "Radio.2.Channel=36"
-  WiFi.Radio.2.Channel=36 (re)
+  Device.WiFi.Radio.2.Channel=36 (re)
 
 Check default SSID status:
 
   $ get_ap_status
-  WiFi.AccessPoint.1.Status="Disabled"
-  WiFi.AccessPoint.2.Status="Disabled"
-  WiFi.AccessPoint.3.Status="Disabled"
-  WiFi.AccessPoint.4.Status="Disabled"
-  WiFi.AccessPoint.5.Status="Disabled"
-  WiFi.AccessPoint.6.Status="Disabled"
-  WiFi.AccessPoint.7.Status="Disabled"
-  WiFi.AccessPoint.8.Status="Disabled"
-  WiFi.AccessPoint.9.Status="Disabled"
+  Device.WiFi.AccessPoint.1.Status="Disabled"
+  Device.WiFi.AccessPoint.2.Status="Disabled"
+  Device.WiFi.AccessPoint.3.Status="Disabled"
+  Device.WiFi.AccessPoint.4.Status="Disabled"
+  Device.WiFi.AccessPoint.5.Status="Disabled"
+  Device.WiFi.AccessPoint.6.Status="Disabled"
+  Device.WiFi.AccessPoint.7.Status="Disabled"
+  Device.WiFi.AccessPoint.8.Status="Disabled"
+  Device.WiFi.AccessPoint.9.Status="Disabled"
 
 Check default SSID configuration of access points:
 
@@ -64,15 +67,24 @@ Test activation of access point 1:
   AccessPoint.\d+.Enable=1 (re)
 
   $ wifi_dm "AccessPoint.*.Status?0"
-  WiFi.AccessPoint.1.Status="Enabled"
-  WiFi.AccessPoint.2.Status="Disabled"
-  WiFi.AccessPoint.3.Status="Disabled"
-  WiFi.AccessPoint.4.Status="Disabled"
-  WiFi.AccessPoint.5.Status="Disabled"
-  WiFi.AccessPoint.6.Status="Disabled"
-  WiFi.AccessPoint.7.Status="Disabled"
-  WiFi.AccessPoint.8.Status="Disabled"
-  WiFi.AccessPoint.9.Status="Disabled"
+  Device.WiFi.AccessPoint.1.Status="Enabled"
+  Device.WiFi.AccessPoint.2.Status="Disabled"
+  Device.WiFi.AccessPoint.3.Status="Disabled"
+  Device.WiFi.AccessPoint.4.Status="Disabled"
+  Device.WiFi.AccessPoint.5.Status="Disabled"
+  Device.WiFi.AccessPoint.6.Status="Disabled"
+  Device.WiFi.AccessPoint.7.Status="Disabled"
+  Device.WiFi.AccessPoint.8.Status="Disabled"
+  Device.WiFi.AccessPoint.9.Status="Disabled"
+
+Check wpacltrl socket file:
+
+  $ ls_ap_hapd_socket 1
+  /var/run/hostapd/wlan[0-9.]+_link[0-9].* (re)
+
+  $ ls_hapd_sockets
+  wlan2.1
+  wlan2\.1_link\d+ (re)
 
 Save hostap pid:
 
@@ -87,15 +99,26 @@ Test activation of access point 2:
   AccessPoint.2.Enable=1
 
   $ wifi_dm "AccessPoint.*.Status?0"
-  WiFi.AccessPoint.1.Status="Enabled"
-  WiFi.AccessPoint.2.Status="Enabled"
-  WiFi.AccessPoint.3.Status="Disabled"
-  WiFi.AccessPoint.4.Status="Disabled"
-  WiFi.AccessPoint.5.Status="Disabled"
-  WiFi.AccessPoint.6.Status="Disabled"
-  WiFi.AccessPoint.7.Status="Disabled"
-  WiFi.AccessPoint.8.Status="Disabled"
-  WiFi.AccessPoint.9.Status="Disabled"
+  Device.WiFi.AccessPoint.1.Status="Enabled"
+  Device.WiFi.AccessPoint.2.Status="Enabled"
+  Device.WiFi.AccessPoint.3.Status="Disabled"
+  Device.WiFi.AccessPoint.4.Status="Disabled"
+  Device.WiFi.AccessPoint.5.Status="Disabled"
+  Device.WiFi.AccessPoint.6.Status="Disabled"
+  Device.WiFi.AccessPoint.7.Status="Disabled"
+  Device.WiFi.AccessPoint.8.Status="Disabled"
+  Device.WiFi.AccessPoint.9.Status="Disabled"
+
+Check wpacltrl socket file:
+
+  $ ls_ap_hapd_socket 2
+  /var/run/hostapd/wlan[0-9.]+_link[0-9] (re)
+
+  $ ls_hapd_sockets
+  wlan2.1
+  wlan2\.1_link\d+ (re)
+  wlan2.2
+  wlan2\.2_link\d+ (re)
 
 Test activation of access point 3:
 
@@ -105,15 +128,27 @@ Test activation of access point 3:
   AccessPoint.3.Enable=1
 
   $ wifi_dm "AccessPoint.*.Status?0"
-  WiFi.AccessPoint.1.Status="Enabled"
-  WiFi.AccessPoint.2.Status="Enabled"
-  WiFi.AccessPoint.3.Status="Enabled"
-  WiFi.AccessPoint.4.Status="Disabled"
-  WiFi.AccessPoint.5.Status="Disabled"
-  WiFi.AccessPoint.6.Status="Disabled"
-  WiFi.AccessPoint.7.Status="Disabled"
-  WiFi.AccessPoint.8.Status="Disabled"
-  WiFi.AccessPoint.9.Status="Disabled"
+  Device.WiFi.AccessPoint.1.Status="Enabled"
+  Device.WiFi.AccessPoint.2.Status="Enabled"
+  Device.WiFi.AccessPoint.3.Status="Enabled"
+  Device.WiFi.AccessPoint.4.Status="Disabled"
+  Device.WiFi.AccessPoint.5.Status="Disabled"
+  Device.WiFi.AccessPoint.6.Status="Disabled"
+  Device.WiFi.AccessPoint.7.Status="Disabled"
+  Device.WiFi.AccessPoint.8.Status="Disabled"
+  Device.WiFi.AccessPoint.9.Status="Disabled"
+
+Check wpacltrl socket file:
+
+  $ ls_ap_hapd_socket 3
+  /var/run/hostapd/wlan[0-9.]+_link[0-9] (re)
+
+  $ ls_hapd_sockets
+  wlan2.1
+  wlan2\.1_link\d+ (re)
+  wlan2\.1_link\d+ (re)
+  wlan2.2
+  wlan2\.2_link\d+ (re)
 
 Test activation of access point 4:
 
@@ -123,15 +158,28 @@ Test activation of access point 4:
   AccessPoint.4.Enable=1
 
   $ wifi_dm "AccessPoint.*.Status?0"
-  WiFi.AccessPoint.1.Status="Enabled"
-  WiFi.AccessPoint.2.Status="Enabled"
-  WiFi.AccessPoint.3.Status="Enabled"
-  WiFi.AccessPoint.4.Status="Enabled"
-  WiFi.AccessPoint.5.Status="Disabled"
-  WiFi.AccessPoint.6.Status="Disabled"
-  WiFi.AccessPoint.7.Status="Disabled"
-  WiFi.AccessPoint.8.Status="Disabled"
-  WiFi.AccessPoint.9.Status="Disabled"
+  Device.WiFi.AccessPoint.1.Status="Enabled"
+  Device.WiFi.AccessPoint.2.Status="Enabled"
+  Device.WiFi.AccessPoint.3.Status="Enabled"
+  Device.WiFi.AccessPoint.4.Status="Enabled"
+  Device.WiFi.AccessPoint.5.Status="Disabled"
+  Device.WiFi.AccessPoint.6.Status="Disabled"
+  Device.WiFi.AccessPoint.7.Status="Disabled"
+  Device.WiFi.AccessPoint.8.Status="Disabled"
+  Device.WiFi.AccessPoint.9.Status="Disabled"
+
+Check wpacltrl socket file:
+
+  $ ls_ap_hapd_socket 4
+  /var/run/hostapd/wlan[0-9.]+_link[0-9] (re)
+
+  $ ls_hapd_sockets
+  wlan2.1
+  wlan2\.1_link\d+ (re)
+  wlan2\.1_link\d+ (re)
+  wlan2.2
+  wlan2\.2_link\d+ (re)
+  wlan2\.2_link\d+ (re)
 
 Test activation of access point 5:
 
@@ -141,15 +189,29 @@ Test activation of access point 5:
   AccessPoint.5.Enable=1
 
   $ wifi_dm "AccessPoint.*.Status?0"
-  WiFi.AccessPoint.1.Status="Enabled"
-  WiFi.AccessPoint.2.Status="Enabled"
-  WiFi.AccessPoint.3.Status="Enabled"
-  WiFi.AccessPoint.4.Status="Enabled"
-  WiFi.AccessPoint.5.Status="Enabled"
-  WiFi.AccessPoint.6.Status="Disabled"
-  WiFi.AccessPoint.7.Status="Disabled"
-  WiFi.AccessPoint.8.Status="Disabled"
-  WiFi.AccessPoint.9.Status="Disabled"
+  Device.WiFi.AccessPoint.1.Status="Enabled"
+  Device.WiFi.AccessPoint.2.Status="Enabled"
+  Device.WiFi.AccessPoint.3.Status="Enabled"
+  Device.WiFi.AccessPoint.4.Status="Enabled"
+  Device.WiFi.AccessPoint.5.Status="Enabled"
+  Device.WiFi.AccessPoint.6.Status="Disabled"
+  Device.WiFi.AccessPoint.7.Status="Disabled"
+  Device.WiFi.AccessPoint.8.Status="Disabled"
+  Device.WiFi.AccessPoint.9.Status="Disabled"
+
+Check wpacltrl socket file:
+
+  $ ls_ap_hapd_socket 5
+  /var/run/hostapd/wlan[0-9.]+_link[0-9] (re)
+
+  $ ls_hapd_sockets
+  wlan2.1
+  wlan2\.1_link\d+ (re)
+  wlan2\.1_link\d+ (re)
+  wlan2\.1_link\d+ (re)
+  wlan2.2
+  wlan2\.2_link\d+ (re)
+  wlan2\.2_link\d+ (re)
 
 Test activation of access point 6:
 
@@ -159,15 +221,30 @@ Test activation of access point 6:
   AccessPoint.6.Enable=1
 
   $ wifi_dm "AccessPoint.*.Status?0"
-  WiFi.AccessPoint.1.Status="Enabled"
-  WiFi.AccessPoint.2.Status="Enabled"
-  WiFi.AccessPoint.3.Status="Enabled"
-  WiFi.AccessPoint.4.Status="Enabled"
-  WiFi.AccessPoint.5.Status="Enabled"
-  WiFi.AccessPoint.6.Status="Enabled"
-  WiFi.AccessPoint.7.Status="Disabled"
-  WiFi.AccessPoint.8.Status="Disabled"
-  WiFi.AccessPoint.9.Status="Disabled"
+  Device.WiFi.AccessPoint.1.Status="Enabled"
+  Device.WiFi.AccessPoint.2.Status="Enabled"
+  Device.WiFi.AccessPoint.3.Status="Enabled"
+  Device.WiFi.AccessPoint.4.Status="Enabled"
+  Device.WiFi.AccessPoint.5.Status="Enabled"
+  Device.WiFi.AccessPoint.6.Status="Enabled"
+  Device.WiFi.AccessPoint.7.Status="Disabled"
+  Device.WiFi.AccessPoint.8.Status="Disabled"
+  Device.WiFi.AccessPoint.9.Status="Disabled"
+
+Check wpacltrl socket file:
+
+  $ ls_ap_hapd_socket 6
+  /var/run/hostapd/wlan[0-9.]+_link[0-9] (re)
+
+  $ ls_hapd_sockets
+  wlan2.1
+  wlan2\.1_link\d+ (re)
+  wlan2\.1_link\d+ (re)
+  wlan2\.1_link\d+ (re)
+  wlan2.2
+  wlan2\.2_link\d+ (re)
+  wlan2\.2_link\d+ (re)
+  wlan2\.2_link\d+ (re)
 
 Test activation of access point 7:
 
@@ -177,15 +254,33 @@ Test activation of access point 7:
   AccessPoint.7.Enable=1
 
   $ wifi_dm "AccessPoint.*.Status?0"
-  WiFi.AccessPoint.1.Status="Enabled"
-  WiFi.AccessPoint.2.Status="Enabled"
-  WiFi.AccessPoint.3.Status="Enabled"
-  WiFi.AccessPoint.4.Status="Enabled"
-  WiFi.AccessPoint.5.Status="Enabled"
-  WiFi.AccessPoint.6.Status="Enabled"
-  WiFi.AccessPoint.7.Status="Enabled"
-  WiFi.AccessPoint.8.Status="Disabled"
-  WiFi.AccessPoint.9.Status="Disabled"
+  Device.WiFi.AccessPoint.1.Status="Enabled"
+  Device.WiFi.AccessPoint.2.Status="Enabled"
+  Device.WiFi.AccessPoint.3.Status="Enabled"
+  Device.WiFi.AccessPoint.4.Status="Enabled"
+  Device.WiFi.AccessPoint.5.Status="Enabled"
+  Device.WiFi.AccessPoint.6.Status="Enabled"
+  Device.WiFi.AccessPoint.7.Status="Enabled"
+  Device.WiFi.AccessPoint.8.Status="Disabled"
+  Device.WiFi.AccessPoint.9.Status="Disabled"
+
+Check wpacltrl socket file:
+
+  $ ls_ap_hapd_socket 7
+  /var/run/hostapd/wlan[0-9.]+_link[0-9] (re)
+
+  $ ls_hapd_sockets
+  wlan2.1
+  wlan2\.1_link\d+ (re)
+  wlan2\.1_link\d+ (re)
+  wlan2\.1_link\d+ (re)
+  wlan2.2
+  wlan2\.2_link\d+ (re)
+  wlan2\.2_link\d+ (re)
+  wlan2\.2_link\d+ (re)
+  wlan2.3
+  wlan2\.3_link\d+ (re)
+
 
 Test activation of access point 8:
 
@@ -195,15 +290,33 @@ Test activation of access point 8:
   AccessPoint.8.Enable=1
 
   $ wifi_dm "AccessPoint.*.Status?0"
-  WiFi.AccessPoint.1.Status="Enabled"
-  WiFi.AccessPoint.2.Status="Enabled"
-  WiFi.AccessPoint.3.Status="Enabled"
-  WiFi.AccessPoint.4.Status="Enabled"
-  WiFi.AccessPoint.5.Status="Enabled"
-  WiFi.AccessPoint.6.Status="Enabled"
-  WiFi.AccessPoint.7.Status="Enabled"
-  WiFi.AccessPoint.8.Status="Enabled"
-  WiFi.AccessPoint.9.Status="Disabled"
+  Device.WiFi.AccessPoint.1.Status="Enabled"
+  Device.WiFi.AccessPoint.2.Status="Enabled"
+  Device.WiFi.AccessPoint.3.Status="Enabled"
+  Device.WiFi.AccessPoint.4.Status="Enabled"
+  Device.WiFi.AccessPoint.5.Status="Enabled"
+  Device.WiFi.AccessPoint.6.Status="Enabled"
+  Device.WiFi.AccessPoint.7.Status="Enabled"
+  Device.WiFi.AccessPoint.8.Status="Enabled"
+  Device.WiFi.AccessPoint.9.Status="Disabled"
+
+Check wpacltrl socket file:
+
+  $ ls_ap_hapd_socket 8
+  /var/run/hostapd/wlan[0-9.]+_link[0-9] (re)
+
+  $ ls_hapd_sockets
+  wlan2.1
+  wlan2\.1_link\d+ (re)
+  wlan2\.1_link\d+ (re)
+  wlan2\.1_link\d+ (re)
+  wlan2.2
+  wlan2\.2_link\d+ (re)
+  wlan2\.2_link\d+ (re)
+  wlan2\.2_link\d+ (re)
+  wlan2.3
+  wlan2\.3_link\d+ (re)
+  wlan2\.3_link\d+ (re)
 
 Test activation of access point 9:
 
@@ -213,15 +326,36 @@ Test activation of access point 9:
   AccessPoint.9.Enable=1
 
   $ wifi_dm "AccessPoint.*.Status?0"
-  WiFi.AccessPoint.1.Status="Enabled"
-  WiFi.AccessPoint.2.Status="Enabled"
-  WiFi.AccessPoint.3.Status="Enabled"
-  WiFi.AccessPoint.4.Status="Enabled"
-  WiFi.AccessPoint.5.Status="Enabled"
-  WiFi.AccessPoint.6.Status="Enabled"
-  WiFi.AccessPoint.7.Status="Enabled"
-  WiFi.AccessPoint.8.Status="Enabled"
-  WiFi.AccessPoint.9.Status="Enabled"
+  Device.WiFi.AccessPoint.1.Status="Enabled"
+  Device.WiFi.AccessPoint.2.Status="Enabled"
+  Device.WiFi.AccessPoint.3.Status="Enabled"
+  Device.WiFi.AccessPoint.4.Status="Enabled"
+  Device.WiFi.AccessPoint.5.Status="Enabled"
+  Device.WiFi.AccessPoint.6.Status="Enabled"
+  Device.WiFi.AccessPoint.7.Status="Enabled"
+  Device.WiFi.AccessPoint.8.Status="Enabled"
+  Device.WiFi.AccessPoint.9.Status="Enabled"
+
+Check wpacltrl socket file:
+
+  $ ls_ap_hapd_socket 9
+  /var/run/hostapd/wlan[0-9.]+_link[0-9] (re)
+
+  $ ls_hapd_sockets
+  wlan2.1
+  wlan2\.1_link\d+ (re)
+  wlan2\.1_link\d+ (re)
+  wlan2\.1_link\d+ (re)
+  wlan2.2
+  wlan2\.2_link\d+ (re)
+  wlan2\.2_link\d+ (re)
+  wlan2\.2_link\d+ (re)
+  wlan2.3
+  wlan2\.3_link\d+ (re)
+  wlan2\.3_link\d+ (re)
+  wlan2\.3_link\d+ (re)
+
+  $ sleep 5
 
 Check that hostapd is operating as expected:
 
@@ -235,12 +369,6 @@ Check that hostapd is operating as expected:
   hostapd
 
   $ R "ubus list | grep hostapd. | sort"
-  hostapd.wlan0.1
-  hostapd.wlan0.2
-  hostapd.wlan0.3
-  hostapd.wlan1.1
-  hostapd.wlan1.2
-  hostapd.wlan1.3
   hostapd.wlan2.1
   hostapd.wlan2.2
   hostapd.wlan2.3
@@ -261,14 +389,33 @@ Check iw interfaces and beaconing:
   Interface wlan2.2
   Interface wlan2.3
   ssid backhaul_(1C:F4:3F|20:37:F0):[0-9A-F]{2}:[0-9A-F]{2}:[0-9A-F]{2} (re)
-  ssid backhaul_(1C:F4:3F|20:37:F0):[0-9A-F]{2}:[0-9A-F]{2}:[0-9A-F]{2} (re)
-  ssid backhaul_(1C:F4:3F|20:37:F0):[0-9A-F]{2}:[0-9A-F]{2}:[0-9A-F]{2} (re)
-  ssid prplOS
-  ssid prplOS
   ssid prplOS
   ssid prplOS-guest
-  ssid prplOS-guest
-  ssid prplOS-guest
+
+Check that the tree interfaces are present in the main link interface:
+
+  $ R "iw dev" | grep -e link -A 3 | grep -e link -e channel | sed 's/^[ \t]*//'
+  MLD with links:
+  - link ID +\d+ link addr ([0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2} (re)
+  channel.* (re)
+  - link ID +\d+ link addr ([0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2} (re)
+  channel.* (re)
+  - link ID +\d+ link addr ([0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2} (re)
+  channel.* (re)
+  MLD with links:
+  - link ID +\d+ link addr ([0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2} (re)
+  channel.* (re)
+  - link ID +\d+ link addr ([0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2} (re)
+  channel.* (re)
+  - link ID +\d+ link addr ([0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2} (re)
+  channel.* (re)
+  MLD with links:
+  - link ID +\d+ link addr ([0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2} (re)
+  channel.* (re)
+  - link ID +\d+ link addr ([0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2} (re)
+  channel.* (re)
+  - link ID +\d+ link addr ([0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2} (re)
+  channel.* (re)
 
 Test deactivation of access point 9:
 
@@ -276,15 +423,33 @@ Test deactivation of access point 9:
   AccessPoint.9.Enable=0
 
   $ wifi_dm "AccessPoint.*.Status?0"
-  WiFi.AccessPoint.1.Status="Enabled"
-  WiFi.AccessPoint.2.Status="Enabled"
-  WiFi.AccessPoint.3.Status="Enabled"
-  WiFi.AccessPoint.4.Status="Enabled"
-  WiFi.AccessPoint.5.Status="Enabled"
-  WiFi.AccessPoint.6.Status="Enabled"
-  WiFi.AccessPoint.7.Status="Enabled"
-  WiFi.AccessPoint.8.Status="Enabled"
-  WiFi.AccessPoint.9.Status="Disabled"
+  Device.WiFi.AccessPoint.1.Status="Enabled"
+  Device.WiFi.AccessPoint.2.Status="Enabled"
+  Device.WiFi.AccessPoint.3.Status="Enabled"
+  Device.WiFi.AccessPoint.4.Status="Enabled"
+  Device.WiFi.AccessPoint.5.Status="Enabled"
+  Device.WiFi.AccessPoint.6.Status="Enabled"
+  Device.WiFi.AccessPoint.7.Status="Enabled"
+  Device.WiFi.AccessPoint.8.Status="Enabled"
+  Device.WiFi.AccessPoint.9.Status="Disabled"
+
+Check wpacltrl socket file:
+
+  $ ls_ap_hapd_socket 9
+  not found
+
+  $ ls_hapd_sockets
+  wlan2.1
+  wlan2\.1_link\d+ (re)
+  wlan2\.1_link\d+ (re)
+  wlan2\.1_link\d+ (re)
+  wlan2.2
+  wlan2\.2_link\d+ (re)
+  wlan2\.2_link\d+ (re)
+  wlan2\.2_link\d+ (re)
+  wlan2.3
+  wlan2\.3_link\d+ (re)
+  wlan2\.3_link\d+ (re)
 
 Test deactivation of access point 8:
 
@@ -294,15 +459,32 @@ Test deactivation of access point 8:
   AccessPoint.8.Enable=0
 
   $ wifi_dm "AccessPoint.*.Status?0"
-  WiFi.AccessPoint.1.Status="Enabled"
-  WiFi.AccessPoint.2.Status="Enabled"
-  WiFi.AccessPoint.3.Status="Enabled"
-  WiFi.AccessPoint.4.Status="Enabled"
-  WiFi.AccessPoint.5.Status="Enabled"
-  WiFi.AccessPoint.6.Status="Enabled"
-  WiFi.AccessPoint.7.Status="Enabled"
-  WiFi.AccessPoint.8.Status="Disabled"
-  WiFi.AccessPoint.9.Status="Disabled"
+  Device.WiFi.AccessPoint.1.Status="Enabled"
+  Device.WiFi.AccessPoint.2.Status="Enabled"
+  Device.WiFi.AccessPoint.3.Status="Enabled"
+  Device.WiFi.AccessPoint.4.Status="Enabled"
+  Device.WiFi.AccessPoint.5.Status="Enabled"
+  Device.WiFi.AccessPoint.6.Status="Enabled"
+  Device.WiFi.AccessPoint.7.Status="Enabled"
+  Device.WiFi.AccessPoint.8.Status="Disabled"
+  Device.WiFi.AccessPoint.9.Status="Disabled"
+
+Check wpacltrl socket file:
+
+  $ ls_ap_hapd_socket 8
+  not found
+
+  $ ls_hapd_sockets
+  wlan2.1
+  wlan2\.1_link\d+ (re)
+  wlan2\.1_link\d+ (re)
+  wlan2\.1_link\d+ (re)
+  wlan2.2
+  wlan2\.2_link\d+ (re)
+  wlan2\.2_link\d+ (re)
+  wlan2\.2_link\d+ (re)
+  wlan2.3
+  wlan2\.3_link\d+ (re)
 
 Test deactivation of access point 7:
 
@@ -312,15 +494,30 @@ Test deactivation of access point 7:
   AccessPoint.7.Enable=0
 
   $ wifi_dm "AccessPoint.*.Status?0"
-  WiFi.AccessPoint.1.Status="Enabled"
-  WiFi.AccessPoint.2.Status="Enabled"
-  WiFi.AccessPoint.3.Status="Enabled"
-  WiFi.AccessPoint.4.Status="Enabled"
-  WiFi.AccessPoint.5.Status="Enabled"
-  WiFi.AccessPoint.6.Status="Enabled"
-  WiFi.AccessPoint.7.Status="Disabled"
-  WiFi.AccessPoint.8.Status="Disabled"
-  WiFi.AccessPoint.9.Status="Disabled"
+  Device.WiFi.AccessPoint.1.Status="Enabled"
+  Device.WiFi.AccessPoint.2.Status="Enabled"
+  Device.WiFi.AccessPoint.3.Status="Enabled"
+  Device.WiFi.AccessPoint.4.Status="Enabled"
+  Device.WiFi.AccessPoint.5.Status="Enabled"
+  Device.WiFi.AccessPoint.6.Status="Enabled"
+  Device.WiFi.AccessPoint.7.Status="Disabled"
+  Device.WiFi.AccessPoint.8.Status="Disabled"
+  Device.WiFi.AccessPoint.9.Status="Disabled"
+
+Check wpacltrl socket file:
+
+  $ ls_ap_hapd_socket 7
+  not found
+
+  $ ls_hapd_sockets
+  wlan2.1
+  wlan2\.1_link\d+ (re)
+  wlan2\.1_link\d+ (re)
+  wlan2\.1_link\d+ (re)
+  wlan2.2
+  wlan2\.2_link\d+ (re)
+  wlan2\.2_link\d+ (re)
+  wlan2\.2_link\d+ (re)
 
 Test deactivation of access point 6:
 
@@ -330,15 +527,29 @@ Test deactivation of access point 6:
   AccessPoint.6.Enable=0
 
   $ wifi_dm "AccessPoint.*.Status?0"
-  WiFi.AccessPoint.1.Status="Enabled"
-  WiFi.AccessPoint.2.Status="Enabled"
-  WiFi.AccessPoint.3.Status="Enabled"
-  WiFi.AccessPoint.4.Status="Enabled"
-  WiFi.AccessPoint.5.Status="Enabled"
-  WiFi.AccessPoint.6.Status="Disabled"
-  WiFi.AccessPoint.7.Status="Disabled"
-  WiFi.AccessPoint.8.Status="Disabled"
-  WiFi.AccessPoint.9.Status="Disabled"
+  Device.WiFi.AccessPoint.1.Status="Enabled"
+  Device.WiFi.AccessPoint.2.Status="Enabled"
+  Device.WiFi.AccessPoint.3.Status="Enabled"
+  Device.WiFi.AccessPoint.4.Status="Enabled"
+  Device.WiFi.AccessPoint.5.Status="Enabled"
+  Device.WiFi.AccessPoint.6.Status="Disabled"
+  Device.WiFi.AccessPoint.7.Status="Disabled"
+  Device.WiFi.AccessPoint.8.Status="Disabled"
+  Device.WiFi.AccessPoint.9.Status="Disabled"
+
+Check wpacltrl socket file:
+
+  $ ls_ap_hapd_socket 6
+  not found
+
+  $ ls_hapd_sockets
+  wlan2.1
+  wlan2\.1_link\d+ (re)
+  wlan2\.1_link\d+ (re)
+  wlan2\.1_link\d+ (re)
+  wlan2.2
+  wlan2\.2_link\d+ (re)
+  wlan2\.2_link\d+ (re)
 
 Test deactivation of access point 5:
 
@@ -348,15 +559,28 @@ Test deactivation of access point 5:
   AccessPoint.5.Enable=0
 
   $ wifi_dm "AccessPoint.*.Status?0"
-  WiFi.AccessPoint.1.Status="Enabled"
-  WiFi.AccessPoint.2.Status="Enabled"
-  WiFi.AccessPoint.3.Status="Enabled"
-  WiFi.AccessPoint.4.Status="Enabled"
-  WiFi.AccessPoint.5.Status="Disabled"
-  WiFi.AccessPoint.6.Status="Disabled"
-  WiFi.AccessPoint.7.Status="Disabled"
-  WiFi.AccessPoint.8.Status="Disabled"
-  WiFi.AccessPoint.9.Status="Disabled"
+  Device.WiFi.AccessPoint.1.Status="Enabled"
+  Device.WiFi.AccessPoint.2.Status="Enabled"
+  Device.WiFi.AccessPoint.3.Status="Enabled"
+  Device.WiFi.AccessPoint.4.Status="Enabled"
+  Device.WiFi.AccessPoint.5.Status="Disabled"
+  Device.WiFi.AccessPoint.6.Status="Disabled"
+  Device.WiFi.AccessPoint.7.Status="Disabled"
+  Device.WiFi.AccessPoint.8.Status="Disabled"
+  Device.WiFi.AccessPoint.9.Status="Disabled"
+
+Check wpacltrl socket file:
+
+  $ ls_ap_hapd_socket 5
+  not found
+
+  $ ls_hapd_sockets
+  wlan2.1
+  wlan2\.1_link\d+ (re)
+  wlan2\.1_link\d+ (re)
+  wlan2.2
+  wlan2\.2_link\d+ (re)
+  wlan2\.2_link\d+ (re)
 
 Test deactivation of access point 4:
 
@@ -366,15 +590,27 @@ Test deactivation of access point 4:
   AccessPoint.4.Enable=0
 
   $ wifi_dm "AccessPoint.*.Status?0"
-  WiFi.AccessPoint.1.Status="Enabled"
-  WiFi.AccessPoint.2.Status="Enabled"
-  WiFi.AccessPoint.3.Status="Enabled"
-  WiFi.AccessPoint.4.Status="Disabled"
-  WiFi.AccessPoint.5.Status="Disabled"
-  WiFi.AccessPoint.6.Status="Disabled"
-  WiFi.AccessPoint.7.Status="Disabled"
-  WiFi.AccessPoint.8.Status="Disabled"
-  WiFi.AccessPoint.9.Status="Disabled"
+  Device.WiFi.AccessPoint.1.Status="Enabled"
+  Device.WiFi.AccessPoint.2.Status="Enabled"
+  Device.WiFi.AccessPoint.3.Status="Enabled"
+  Device.WiFi.AccessPoint.4.Status="Disabled"
+  Device.WiFi.AccessPoint.5.Status="Disabled"
+  Device.WiFi.AccessPoint.6.Status="Disabled"
+  Device.WiFi.AccessPoint.7.Status="Disabled"
+  Device.WiFi.AccessPoint.8.Status="Disabled"
+  Device.WiFi.AccessPoint.9.Status="Disabled"
+
+Check wpacltrl socket file:
+
+  $ ls_ap_hapd_socket 4
+  not found
+
+  $ ls_hapd_sockets
+  wlan2.1
+  wlan2\.1_link\d+ (re)
+  wlan2\.1_link\d+ (re)
+  wlan2.2
+  wlan2\.2_link\d+ (re)
 
 Test deactivation of access point 3:
 
@@ -384,15 +620,26 @@ Test deactivation of access point 3:
   AccessPoint.3.Enable=0
 
   $ wifi_dm "AccessPoint.*.Status?0"
-  WiFi.AccessPoint.1.Status="Enabled"
-  WiFi.AccessPoint.2.Status="Enabled"
-  WiFi.AccessPoint.3.Status="Disabled"
-  WiFi.AccessPoint.4.Status="Disabled"
-  WiFi.AccessPoint.5.Status="Disabled"
-  WiFi.AccessPoint.6.Status="Disabled"
-  WiFi.AccessPoint.7.Status="Disabled"
-  WiFi.AccessPoint.8.Status="Disabled"
-  WiFi.AccessPoint.9.Status="Disabled"
+  Device.WiFi.AccessPoint.1.Status="Enabled"
+  Device.WiFi.AccessPoint.2.Status="Enabled"
+  Device.WiFi.AccessPoint.3.Status="Disabled"
+  Device.WiFi.AccessPoint.4.Status="Disabled"
+  Device.WiFi.AccessPoint.5.Status="Disabled"
+  Device.WiFi.AccessPoint.6.Status="Disabled"
+  Device.WiFi.AccessPoint.7.Status="Disabled"
+  Device.WiFi.AccessPoint.8.Status="Disabled"
+  Device.WiFi.AccessPoint.9.Status="Disabled"
+
+Check wpacltrl socket file:
+
+  $ ls_ap_hapd_socket 3
+  not found
+
+  $ ls_hapd_sockets
+  wlan2.1
+  wlan2\.1_link\d+ (re)
+  wlan2.2
+  wlan2\.2_link\d+ (re)
 
 Test deactivation of access point 2:
 
@@ -402,15 +649,24 @@ Test deactivation of access point 2:
   AccessPoint.2.Enable=0
 
   $ wifi_dm "AccessPoint.*.Status?0"
-  WiFi.AccessPoint.1.Status="Enabled"
-  WiFi.AccessPoint.2.Status="Disabled"
-  WiFi.AccessPoint.3.Status="Disabled"
-  WiFi.AccessPoint.4.Status="Disabled"
-  WiFi.AccessPoint.5.Status="Disabled"
-  WiFi.AccessPoint.6.Status="Disabled"
-  WiFi.AccessPoint.7.Status="Disabled"
-  WiFi.AccessPoint.8.Status="Disabled"
-  WiFi.AccessPoint.9.Status="Disabled"
+  Device.WiFi.AccessPoint.1.Status="Enabled"
+  Device.WiFi.AccessPoint.2.Status="Disabled"
+  Device.WiFi.AccessPoint.3.Status="Disabled"
+  Device.WiFi.AccessPoint.4.Status="Disabled"
+  Device.WiFi.AccessPoint.5.Status="Disabled"
+  Device.WiFi.AccessPoint.6.Status="Disabled"
+  Device.WiFi.AccessPoint.7.Status="Disabled"
+  Device.WiFi.AccessPoint.8.Status="Disabled"
+  Device.WiFi.AccessPoint.9.Status="Disabled"
+
+Check wpacltrl socket file:
+
+  $ ls_ap_hapd_socket 2
+  not found
+
+  $ ls_hapd_sockets
+  wlan2.1
+  wlan2\.1_link\d+ (re)
 
 Before deactivating last AP (ie stopping hostpad), check if hostap pid has changed or not:
 
@@ -425,15 +681,23 @@ Test deactivation of access point 1:
   AccessPoint.1.Enable=0
 
   $ wifi_dm "AccessPoint.*.Status?0"
-  WiFi.AccessPoint.1.Status="Disabled"
-  WiFi.AccessPoint.2.Status="Disabled"
-  WiFi.AccessPoint.3.Status="Disabled"
-  WiFi.AccessPoint.4.Status="Disabled"
-  WiFi.AccessPoint.5.Status="Disabled"
-  WiFi.AccessPoint.6.Status="Disabled"
-  WiFi.AccessPoint.7.Status="Disabled"
-  WiFi.AccessPoint.8.Status="Disabled"
-  WiFi.AccessPoint.9.Status="Disabled"
+  Device.WiFi.AccessPoint.1.Status="Disabled"
+  Device.WiFi.AccessPoint.2.Status="Disabled"
+  Device.WiFi.AccessPoint.3.Status="Disabled"
+  Device.WiFi.AccessPoint.4.Status="Disabled"
+  Device.WiFi.AccessPoint.5.Status="Disabled"
+  Device.WiFi.AccessPoint.6.Status="Disabled"
+  Device.WiFi.AccessPoint.7.Status="Disabled"
+  Device.WiFi.AccessPoint.8.Status="Disabled"
+  Device.WiFi.AccessPoint.9.Status="Disabled"
+
+Check wpacltrl socket file:
+
+  $ ls_ap_hapd_socket 1
+  not found
+
+  $ ls_hapd_sockets
+  ls: /var/run/hostapd/: No such file or directory
 
 Check if hostapd process is stopped:
 
@@ -442,7 +706,8 @@ Check if hostapd process is stopped:
 
 Resume prplMesh:
 
-  $ R "/etc/init.d/prplmesh start 2>&1 > /dev/null"
+  $ R "ba-cli -l X_PRPLWARE-COM_ProcessManager.PrplMesh.Enable=1" | tr -d '\n'
+  1 (no-eol)
 
   $ R logger -t cram "Stopping PWHM test .."
 
