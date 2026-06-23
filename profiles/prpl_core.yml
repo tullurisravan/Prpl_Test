@@ -11,7 +11,11 @@ feeds:
 
   - name: feed_prplos
     uri: https://gitlab.com/prpl-foundation/prplos/feeds/feed-prplos.git
-    revision: main@69a94fef5a0a64bfd14b159409a792ca4cfb5421
+    branch: dev_FEAT-356_357_358
+
+  - name: feed_swupdate
+    uri: https://gitlab.com/prpl-foundation/prplos/feeds/feed_swupdate.git
+    branch: dev_PCF-2340
 
 additional_packages:
   - feed: packages
@@ -25,6 +29,7 @@ packages:
   - amx-cli
   - amx-faultmonitor
   - amx-processmonitor
+  - mod-fwi-swupdate
   - debug-information
   - deviceinfo-manager
   - ethernet-manager

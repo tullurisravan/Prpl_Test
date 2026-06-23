@@ -17,7 +17,7 @@ feeds:
   - name: intel_x86
     uri: https://github.com/maxlinear/feed_target_x86.git
     tracking_branch: updk_9.2.10
-    revision: 9a1de27114ae3cc9238221a8750fbdb9b5637deb
+    revision: 22ebd469ca63aef102e571a4445b642f960a4cba
   - name: rootfs
     uri: https://github.com/maxlinear/rootfs.git
     tracking_branch: updk_9.2.10
@@ -209,3 +209,5 @@ diffconfig: |
   CONFIG_IMAGEGENERATOR_BOARD="tb341_wav700"
   CONFIG_SAH_LIB_MFG_RO_PART_FILE="/dev/mmcblk0p13"
   CONFIG_SECURESTORE_LABEL="config"
+  CONFIG_FWI_FLASH_PARTITIONS="u-boot,kernel"
+  CONFIG_SWUPDATE_TARGET_HW_VERSION="ospv2:1.0"
